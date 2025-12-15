@@ -4,5 +4,5 @@
 
 
 <p align="center">
-  <b>Most advanced commerce module for Laravel</b> to manage, organize and grow your ideas 💡
+  <b>Most advanced commerce module for Laravel</b>
 </p>
