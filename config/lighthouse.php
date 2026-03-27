@@ -61,9 +61,12 @@ return [
     */
 
     'security' => [
-        'max_query_complexity' => QueryComplexity::DISABLED,
-        'max_query_depth' => QueryDepth::DISABLED,
-        'disable_introspection' => DisableIntrospection::DISABLED,
+        'max_query_complexity' => env('LIGHTHOUSE_MAX_QUERY_COMPLEXITY', 100),
+        'max_query_depth' => env('LIGHTHOUSE_MAX_QUERY_DEPTH', 10),
+        'disable_introspection' => env(
+            'LIGHTHOUSE_DISABLE_INTROSPECTION',
+            env('APP_ENV') === 'production' ? DisableIntrospection::ENABLED : DisableIntrospection::DISABLED
+        ),
     ],
 
     /*
