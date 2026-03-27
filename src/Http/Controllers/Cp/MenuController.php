@@ -2,6 +2,7 @@
 
 namespace Cartino\Http\Controllers\Cp;
 
+use Cartino\Cp\Page;
 use Cartino\Http\Controllers\Controller;
 use Cartino\Http\Controllers\Cp\Concerns\HandlesFlashMessages;
 use Cartino\Http\Requests\Menu\ReorderMenuItemsRequest;
@@ -29,14 +30,28 @@ class MenuController extends Controller
     {
         $menus = $this->menuService->getAllMenus();
 
+        $page = Page::make('Navigations')
+            ->breadcrumb('Home', '/cp')
+            ->breadcrumb('Navigations')
+            ->primaryAction('Add navigation', route('cp.navigations.create'));
+
         return Inertia::render('menus/index', [
+            'page' => $page->compile(),
             'menus' => $menus,
         ]);
     }
 
     public function create(): Response
     {
-        return Inertia::render('menus/create');
+        $page = Page::make('Add navigation')
+            ->breadcrumb('Home', '/cp')
+            ->breadcrumb('Navigations', route('cp.navigations.index'))
+            ->breadcrumb('Add navigation')
+            ->primaryAction('Save navigation', null, ['form' => 'resource-form']);
+
+        return Inertia::render('menus/create', [
+            'page' => $page->compile(),
+        ]);
     }
 
     public function store(StoreMenuRequest $request)
@@ -53,7 +68,18 @@ class MenuController extends Controller
         $menu = Menu::where('handle', $handle)->firstOrFail();
         $menuData = $this->menuService->getMenu($handle);
 
+        $page = Page::make("Edit {$menu->title}")
+            ->breadcrumb('Home', '/cp')
+            ->breadcrumb('Navigations', route('cp.navigations.index'))
+            ->breadcrumb($menu->title)
+            ->primaryAction('Save navigation', null, ['form' => 'resource-form'])
+            ->secondaryActions([
+                ['label' => 'Duplicate', 'action' => 'duplicate'],
+                ['label' => 'Delete', 'action' => 'delete', 'destructive' => true],
+            ]);
+
         return Inertia::render('menus/edit', [
+            'page' => $page->compile(),
             'menu' => $menuData,
         ]);
     }

@@ -2,6 +2,7 @@
 
 namespace Cartino\Http\Controllers\Cp;
 
+use Cartino\Cp\Listing;
 use Cartino\Cp\Page;
 use Cartino\DTO\ProductDto;
 use Cartino\Http\Controllers\Controller;
@@ -9,16 +10,16 @@ use Cartino\Http\Resources\ProductResource;
 use Cartino\Models\Brand;
 use Cartino\Models\Category;
 use Cartino\Models\Product;
-use Cartino\Repositories\ProductRepository;
 use Cartino\Schema\SchemaRepository;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
+use Spatie\QueryBuilder\AllowedFilter;
+use Spatie\QueryBuilder\QueryBuilder;
 
 class ProductsController extends Controller
 {
     public function __construct(
         protected SchemaRepository $schemas,
-        protected readonly ProductRepository $repository,
     ) {}
 
     /**
@@ -26,10 +27,6 @@ class ProductsController extends Controller
      */
     public function index(Request $request)
     {
-        $request = $request->all();
-
-        $data = $this->repository->findAll($request);
-
         $page = Page::make(__('products.title'))
             ->breadcrumb(__('admin.navigation.home'), '/cp')
             ->breadcrumb(__('products.title'))
@@ -39,10 +36,55 @@ class ProductsController extends Controller
                 ['label' => __('admin.actions.export'), 'url' => '/cp/products/export'],
             ]);
 
+        $listing = Listing::make()
+            ->column('image', '', sortable: false, width: '60px')
+            ->column('name', __('products.fields.name'), sortable: true)
+            ->column('sku', 'SKU', sortable: true)
+            ->column('status', __('products.fields.status'), sortable: true)
+            ->column('price', __('products.fields.price'), sortable: true, format: 'currency')
+            ->column('stock_quantity', __('products.fields.stock'), sortable: true)
+            ->column('actions', '', sortable: false, width: '100px')
+            ->filter('status', __('products.fields.status'), 'select', [
+                ['value' => '', 'label' => __('admin.all_statuses')],
+                ['value' => 'active', 'label' => __('products.statuses.active')],
+                ['value' => 'draft', 'label' => __('products.statuses.draft')],
+                ['value' => 'archived', 'label' => __('products.statuses.archived')],
+            ], __('admin.all_statuses'))
+            ->filter('category', __('categories.single'), 'select',
+                Category::select('id as value', 'name as label')->get()->prepend(['value' => '', 'label' => __('admin.all')])->toArray(),
+                __('admin.all')
+            )
+            ->bulkAction('activate', __('products.actions.activate'))
+            ->bulkAction('draft', __('products.actions.draft'))
+            ->bulkAction('archive', __('products.actions.archive'))
+            ->bulkAction('delete', __('admin.actions.delete'), destructive: true, confirm: __('products.messages.confirm_bulk_delete'))
+            ->searchable(placeholder: __('products.search'))
+            ->emptyState(
+                __('products.empty.title'),
+                __('products.empty.description'),
+                ['label' => __('products.create'), 'url' => '/cp/products/create'],
+                'package',
+            )
+            ->sort('created_at', 'desc');
+
+        $data = QueryBuilder::for(Product::class)
+            ->select(['products.*'])
+            ->allowedFilters([
+                'name', 'sku', 'status', 'slug',
+                AllowedFilter::exact('brand_id'),
+                AllowedFilter::exact('product_type_id'),
+                AllowedFilter::scope('price_between'),
+            ])
+            ->allowedSorts(['name', 'created_at', 'status', 'price_amount', 'stock_quantity'])
+            ->defaultSort('-created_at')
+            ->with(['brand:id,name,slug', 'productType:id,name'])
+            ->paginate($request->input('per_page', 15))
+            ->withQueryString();
+
         return Inertia::render('products/index', [
             'page' => $page->compile(),
+            'listing' => $listing->toArray(),
             'data' => $data,
-            'actions' => [],
         ]);
     }
 
@@ -85,7 +127,7 @@ class ProductsController extends Controller
             'variants' => ['label' => __('products.tabs.variants'), 'component' => 'ProductVariantsForm'],
         ]);
 
-        return Inertia::render('products/Create', [
+        return Inertia::render('products/create', [
             'page' => $page->compile(),
             'schema' => $schema->toArray(),
             'categories' => Category::select('id', 'name')->get(),
@@ -140,7 +182,7 @@ class ProductsController extends Controller
      */
     public function show(int $id)
     {
-        $data = $this->repository->findById($id);
+        $data = Product::with(['brand', 'productType', 'categories'])->findOrFail($id);
 
         $page = Page::make($data->name)
             ->breadcrumb(__('admin.navigation.home'), '/cp')
@@ -208,7 +250,7 @@ class ProductsController extends Controller
             'variants' => ['label' => __('products.tabs.variants'), 'component' => 'ProductVariantsForm'],
         ]);
 
-        return Inertia::render('products/Edit', [
+        return Inertia::render('products/edit', [
             'page' => $page->compile(),
             'schema' => $schema->toArray(),
             'product' => new ProductResource($product),

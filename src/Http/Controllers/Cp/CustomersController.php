@@ -4,14 +4,19 @@ declare(strict_types=1);
 
 namespace Cartino\Http\Controllers\Cp;
 
+use Cartino\Cp\Listing;
 use Cartino\Cp\Page;
 use Cartino\Http\Requests\CP\StoreCustomerRequest;
 use Cartino\Http\Resources\CP\CustomerResource;
 use Cartino\Models\Customer;
+use Cartino\Models\CustomerGroup;
 use Cartino\Repositories\CustomerRepository;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Inertia\Inertia;
 use Inertia\Response;
+use Spatie\QueryBuilder\AllowedFilter;
+use Spatie\QueryBuilder\QueryBuilder;
 
 class CustomersController extends BaseController
 {
@@ -29,24 +34,58 @@ class CustomersController extends BaseController
      */
     public function index(Request $request): Response
     {
-        $this->addDashboardBreadcrumb()->addBreadcrumb('Customers');
-
-        $filters = $this->getFilters(['search', 'status', 'customer_group_id', 'created_at']);
-
-        $customers = $this->customerRepository->findAll($filters, request('per_page', 15));
-
         $page = Page::make('Customers')
+            ->breadcrumb('Home', '/cp')
+            ->breadcrumb('Customers')
             ->primaryAction('Add customer', route('cp.customers.create'))
             ->secondaryActions([
-                ['label' => 'Import', 'url' => route('cp.customers.import')],
-                ['label' => 'Export', 'url' => route('cp.customers.export')],
-                ['label' => 'Customer groups', 'url' => route('cp.customer-groups.index')],
+                ['label' => 'Import', 'url' => '#'],
+                ['label' => 'Export', 'url' => '#'],
             ]);
 
-        return $this->inertiaResponse('customers/index', [
+        $listing = Listing::make()
+            ->column('full_name', 'Name', sortable: true)
+            ->column('email', 'Email', sortable: true)
+            ->column('phone', 'Phone')
+            ->column('customer_group', 'Group')
+            ->column('orders_count', 'Orders', sortable: true)
+            ->column('status', 'Status', sortable: true)
+            ->column('actions', '', sortable: false, width: '100px')
+            ->filter('status', 'Status', 'select', [
+                ['value' => '', 'label' => 'All'],
+                ['value' => '1', 'label' => 'Active'],
+                ['value' => '0', 'label' => 'Inactive'],
+            ], 'All')
+            ->filter('customer_group_id', 'Group', 'select',
+                CustomerGroup::select('id as value', 'name as label')->get()->prepend(['value' => '', 'label' => 'All Groups'])->toArray(),
+                'All Groups'
+            )
+            ->bulkAction('activate', 'Activate')
+            ->bulkAction('deactivate', 'Deactivate')
+            ->bulkAction('delete', 'Delete', destructive: true, confirm: 'Delete selected customers?')
+            ->bulkAction('export', 'Export')
+            ->searchable(placeholder: 'Search customers...')
+            ->emptyState('No customers yet', 'Customers will appear here when they register or are added manually.', icon: 'users')
+            ->sort('created_at', 'desc');
+
+        $data = QueryBuilder::for(Customer::class)
+            ->select('customers.*')
+            ->with(['customerGroup:id,name,discount_percentage', 'fidelityCard:id,customer_id,card_number,points'])
+            ->withCount('orders')
+            ->allowedFilters([
+                'first_name', 'last_name', 'email', 'phone_number',
+                AllowedFilter::exact('customer_group_id'),
+                AllowedFilter::exact('is_active'),
+            ])
+            ->allowedSorts(['first_name', 'last_name', 'email', 'created_at'])
+            ->defaultSort('-created_at')
+            ->paginate($request->input('per_page', 15))
+            ->withQueryString();
+
+        return Inertia::render('customers/index', [
             'page' => $page->compile(),
-            'customers' => $customers->through(fn ($customer) => new CustomerResource($customer)),
-            'filters' => $filters,
+            'listing' => $listing->toArray(),
+            'data' => $data,
         ]);
     }
 
@@ -66,8 +105,9 @@ class CustomersController extends BaseController
                 ['label' => 'Save & add another', 'action' => 'save_add_another'],
             ]);
 
-        return $this->inertiaResponse('customers/Create', [
+        return Inertia::render('customers/create', [
             'page' => $page->compile(),
+            'customerGroups' => CustomerGroup::select('id', 'name')->get(),
         ]);
     }
 
@@ -116,7 +156,7 @@ class CustomersController extends BaseController
                 ['label' => 'Delete', 'action' => 'delete', 'destructive' => true],
             ]);
 
-        return $this->inertiaResponse('customers/Show', [
+        return Inertia::render('customers/show', [
             'page' => $page->compile(),
             'customer' => new CustomerResource($customer),
         ]);
@@ -152,9 +192,10 @@ class CustomersController extends BaseController
                 'notes' => ['label' => 'Notes', 'component' => 'CustomerNotesForm'],
             ]);
 
-        return $this->inertiaResponse('customers/Edit', [
+        return Inertia::render('customers/edit', [
             'page' => $page->compile(),
             'customer' => new CustomerResource($customer),
+            'customerGroups' => CustomerGroup::select('id', 'name')->get(),
         ]);
     }
 

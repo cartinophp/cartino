@@ -1,17 +1,68 @@
 <template>
-  <div class="products-index">
-    <h1>Show Brand</h1>
-    <div class="debug-props">
-      <code>{{ JSON.stringify($page.props, null, 2) }}</code>
-    </div>
-  </div>
+  <ShowPage :page="page">
+    <Card title="General">
+      <dl class="grid grid-cols-1 md:grid-cols-2 gap-5">
+        <div class="flex flex-col gap-1">
+          <dt class="text-xs font-medium uppercase text-gray-500 tracking-wide">Name</dt>
+          <dd class="text-sm text-gray-900">{{ brand.name }}</dd>
+        </div>
+        <div class="flex flex-col gap-1">
+          <dt class="text-xs font-medium uppercase text-gray-500 tracking-wide">Slug</dt>
+          <dd class="text-sm text-gray-900">{{ brand.slug }}</dd>
+        </div>
+        <div class="flex flex-col gap-1">
+          <dt class="text-xs font-medium uppercase text-gray-500 tracking-wide">Website</dt>
+          <dd class="text-sm text-gray-900">
+            <a v-if="brand.website" :href="brand.website" target="_blank" class="text-blue-600 hover:underline">{{ brand.website }}</a>
+            <span v-else>—</span>
+          </dd>
+        </div>
+        <div class="flex flex-col gap-1 md:col-span-2">
+          <dt class="text-xs font-medium uppercase text-gray-500 tracking-wide">Description</dt>
+          <dd class="text-sm text-gray-900">{{ brand.description || '—' }}</dd>
+        </div>
+      </dl>
+    </Card>
+
+    <Card title="Products" v-if="brand.products?.length">
+      <table class="w-full text-sm">
+        <thead>
+          <tr class="border-b border-gray-200">
+            <th class="text-left p-2 text-xs font-medium uppercase text-gray-500">Name</th>
+            <th class="text-left p-2 text-xs font-medium uppercase text-gray-500">SKU</th>
+            <th class="text-left p-2 text-xs font-medium uppercase text-gray-500">Price</th>
+            <th class="text-left p-2 text-xs font-medium uppercase text-gray-500">Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr v-for="p in brand.products" :key="p.id" class="border-b border-gray-100">
+            <td class="p-2"><a :href="`/cp/products/${p.id}`" class="text-blue-600 hover:underline">{{ p.name }}</a></td>
+            <td class="p-2">{{ p.sku || '—' }}</td>
+            <td class="p-2">&euro;{{ Number(p.price || 0).toFixed(2) }}</td>
+            <td class="p-2"><Badge :variant="p.status === 'active' ? 'success' : 'secondary'">{{ p.status }}</Badge></td>
+          </tr>
+        </tbody>
+      </table>
+    </Card>
+
+    <template #sidebar>
+      <Card title="Status">
+        <Badge :variant="brand.status === 'active' ? 'success' : 'secondary'">{{ brand.status || 'active' }}</Badge>
+      </Card>
+      <Card title="Stats">
+        <div class="flex flex-col gap-2">
+          <div class="flex justify-between text-sm"><span class="text-gray-500">Products</span><strong>{{ brand.products_count || brand.products?.length || 0 }}</strong></div>
+          <div class="flex justify-between text-sm"><span class="text-gray-500">Created</span><strong>{{ new Date(brand.created_at).toLocaleDateString() }}</strong></div>
+        </div>
+      </Card>
+    </template>
+  </ShowPage>
 </template>
 
 <script setup>
-import { usePage } from '@inertiajs/vue3';
+import { Card, Badge } from '@cartino/ui'
+import ShowPage from '../../components/ShowPage.vue'
 
-const props = defineProps({
-  // Add props here based on controller
-});
+defineProps({ page: Object, brand: Object })
 </script>
 

@@ -4,54 +4,72 @@ declare(strict_types=1);
 
 namespace Cartino\Http\Controllers\Cp;
 
+use Cartino\Cp\Listing;
 use Cartino\Cp\Page;
 use Cartino\Http\Requests\CP\StoreCollectionRequest;
 use Cartino\Http\Requests\CP\UpdateCollectionRequest;
 use Cartino\Http\Resources\CP\CollectionResource;
 use Cartino\Models\Category;
-use Cartino\Repositories\CategoryRepository;
 use Cartino\Schema\SchemaRepository;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Inertia\Inertia;
 use Inertia\Response;
+use Spatie\QueryBuilder\QueryBuilder;
 
 class CategoriesController extends BaseController
 {
     public function __construct(
         protected SchemaRepository $schemas,
-        protected readonly CategoryRepository $repository,
     ) {}
-
-    // public function __construct()
-    // {
-    //     $this->middleware('can:browse_collections')->only(['index', 'show']);
-    //     $this->middleware('can:create_collections')->only(['create', 'store']);
-    //     $this->middleware('can:update_collections')->only(['edit', 'update']);
-    //     $this->middleware('can:delete_collections')->only(['destroy']);
-    // }
 
     /**
      * Display collections listing.
      */
     public function index(Request $request): Response
     {
-        $this->addDashboardBreadcrumb()->addBreadcrumb('Catalog', 'cp.categories.index')->addBreadcrumb('Collections');
-
-        $filters = $request->all();
-
-        $data = $this->repository->findAll($filters);
-
         $page = Page::make('Collections')
-            ->primaryAction('Add collection', route('cp.collections.create'))
+            ->breadcrumb('Home', '/cp')
+            ->breadcrumb('Catalog', '/cp/categories')
+            ->breadcrumb('Collections')
+            ->primaryAction('Add collection', route('cp.categories.create'))
             ->secondaryActions([
                 ['label' => 'Import', 'url' => '#'],
                 ['label' => 'Export', 'url' => '#'],
             ]);
 
-        return $this->inertiaResponse('categories/index', [
+        $listing = Listing::make()
+            ->column('name', 'Name', sortable: true)
+            ->column('handle', 'Handle')
+            ->column('children_count', 'Children', sortable: true)
+            ->column('status', 'Status', sortable: true)
+            ->column('actions', '', sortable: false, width: '100px')
+            ->filter('status', 'Status', 'select', [
+                ['value' => '', 'label' => 'All'],
+                ['value' => 'published', 'label' => 'Published'],
+                ['value' => 'draft', 'label' => 'Draft'],
+            ], 'All')
+            ->bulkAction('publish', 'Publish')
+            ->bulkAction('unpublish', 'Unpublish')
+            ->bulkAction('delete', 'Delete', destructive: true, confirm: 'Delete selected collections?')
+            ->bulkAction('export', 'Export')
+            ->searchable(placeholder: 'Search collections...')
+            ->emptyState('No collections yet', 'Create your first collection to organize products.', ['label' => 'Add collection', 'url' => route('cp.categories.create')], 'folder')
+            ->sort('name', 'asc');
+
+        $data = QueryBuilder::for(Category::class)
+            ->withCount('children')
+            ->allowedFilters(['name', 'slug', 'status'])
+            ->allowedSorts(['name', 'created_at', 'status'])
+            ->allowedIncludes(['parent', 'children'])
+            ->defaultSort('name')
+            ->paginate($request->input('per_page', 15))
+            ->withQueryString();
+
+        return Inertia::render('categories/index', [
             'page' => $page->compile(),
+            'listing' => $listing->toArray(),
             'data' => $data,
-            'filters' => $filters,
         ]);
     }
 
@@ -72,8 +90,9 @@ class CategoriesController extends BaseController
                 ['label' => 'Save & add another', 'action' => 'save_add_another'],
             ]);
 
-        return $this->inertiaResponse('collections/Create', [
+        return Inertia::render('categories/create', [
             'page' => $page->compile(),
+            'parents' => Category::whereNull('parent_id')->select('id', 'title')->get(),
         ]);
     }
 
@@ -118,7 +137,7 @@ class CategoriesController extends BaseController
                 ['label' => 'Delete', 'action' => 'delete', 'destructive' => true],
             ]);
 
-        return $this->inertiaResponse('collections/Show', [
+        return Inertia::render('categories/show', [
             'page' => $page->compile(),
             'collection' => new CollectionResource($collection),
         ]);
@@ -154,9 +173,10 @@ class CategoriesController extends BaseController
                 'seo' => ['label' => 'SEO', 'component' => 'CollectionSeoForm'],
             ]);
 
-        return $this->inertiaResponse('collections/Edit', [
+        return Inertia::render('categories/edit', [
             'page' => $page->compile(),
             'collection' => new CollectionResource($collection),
+            'parents' => Category::whereNull('parent_id')->where('id', '!=', $collection->id)->select('id', 'title')->get(),
         ]);
     }
 

@@ -2,6 +2,7 @@
 
 namespace Cartino\Http\Controllers\Cp;
 
+use Cartino\Cp\Listing;
 use Cartino\Cp\Page;
 use Cartino\Http\Controllers\Controller;
 use Cartino\Models\Order;
@@ -10,6 +11,8 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Inertia\Response;
+use Spatie\QueryBuilder\AllowedFilter;
+use Spatie\QueryBuilder\QueryBuilder;
 
 class OrdersController extends Controller
 {
@@ -25,29 +28,61 @@ class OrdersController extends Controller
      */
     public function index(Request $request): Response
     {
-        $page = Page::make('Ordini')->breadcrumb('Home', '/cp')->breadcrumb('Ordini');
+        $page = Page::make('Orders')
+            ->breadcrumb('Home', '/cp')
+            ->breadcrumb('Orders');
 
-        $filters = $request->only([
-            'search',
-            'status',
-            'payment_status',
-            'date_from',
-            'date_to',
-            'sort',
-            'direction',
-            'page',
-        ]);
+        $listing = Listing::make()
+            ->column('order_number', 'Order', sortable: true)
+            ->column('customer_name', 'Customer', sortable: true)
+            ->column('status', 'Status', sortable: true)
+            ->column('payment_status', 'Payment', sortable: true)
+            ->column('total', 'Total', sortable: true, format: 'currency')
+            ->column('items_count', 'Items', sortable: true)
+            ->column('created_at', 'Date', sortable: true, format: 'date')
+            ->column('actions', '', sortable: false, width: '100px')
+            ->filter('status', 'Status', 'select', [
+                ['value' => '', 'label' => 'All Statuses'],
+                ['value' => 'pending', 'label' => 'Pending'],
+                ['value' => 'processing', 'label' => 'Processing'],
+                ['value' => 'shipped', 'label' => 'Shipped'],
+                ['value' => 'delivered', 'label' => 'Delivered'],
+                ['value' => 'cancelled', 'label' => 'Cancelled'],
+                ['value' => 'refunded', 'label' => 'Refunded'],
+            ], 'All Statuses')
+            ->filter('payment_status', 'Payment', 'select', [
+                ['value' => '', 'label' => 'All'],
+                ['value' => 'pending', 'label' => 'Pending'],
+                ['value' => 'paid', 'label' => 'Paid'],
+                ['value' => 'failed', 'label' => 'Failed'],
+                ['value' => 'refunded', 'label' => 'Refunded'],
+            ], 'All')
+            ->bulkAction('fulfill', 'Fulfill')
+            ->bulkAction('cancel', 'Cancel', destructive: true, confirm: 'Cancel selected orders?')
+            ->bulkAction('archive', 'Archive')
+            ->bulkAction('export', 'Export')
+            ->searchable(placeholder: 'Search orders...')
+            ->emptyState('No orders yet', 'Orders will appear here when customers make purchases.', icon: 'shopping-cart')
+            ->sort('created_at', 'desc')
+            ->perPage(25);
 
-        $orders = $this->orderRepository->findAll($filters, 25);
-        $customers = $this->orderRepository->getCustomersForSelect();
-        $products = $this->orderRepository->getProductsForSelect();
+        $data = QueryBuilder::for(Order::class)
+            ->with(['customer', 'lines'])
+            ->allowedFilters([
+                'order_number', 'status', 'payment_status',
+                AllowedFilter::exact('customer_id'),
+                AllowedFilter::scope('date_from'),
+                AllowedFilter::scope('date_to'),
+            ])
+            ->allowedSorts(['order_number', 'created_at', 'total_amount', 'status'])
+            ->defaultSort('-created_at')
+            ->paginate($request->input('per_page', 25))
+            ->withQueryString();
 
         return Inertia::render('orders/index', [
             'page' => $page->compile(),
-            'orders' => $orders,
-            'customers' => $customers,
-            'products' => $products,
-            'filters' => $filters,
+            'listing' => $listing->toArray(),
+            'data' => $data,
         ]);
     }
 
@@ -106,7 +141,7 @@ class OrdersController extends Controller
             'billingAddress',
         ]);
 
-        return Inertia::render('order-show', [
+        return Inertia::render('orders/show', [
             'page' => $page->compile(),
             'order' => $order,
         ]);

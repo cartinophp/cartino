@@ -2,6 +2,7 @@
 
 namespace Cartino\Http\Controllers\Cp;
 
+use Cartino\Cp\Listing;
 use Cartino\Cp\Page;
 use Cartino\Http\Controllers\Controller;
 use Cartino\Models\Product;
@@ -13,6 +14,8 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 use Inertia\Inertia;
+use Spatie\QueryBuilder\AllowedFilter;
+use Spatie\QueryBuilder\QueryBuilder;
 
 class ReviewsController extends Controller
 {
@@ -32,13 +35,56 @@ class ReviewsController extends Controller
                 ['label' => 'Analytics', 'url' => '/cp/reviews/analytics'],
             ]);
 
-        // If AJAX request, return data for Vue component
-        if ($request->expectsJson()) {
-            return $this->getReviewsData($request);
-        }
+        $listing = Listing::make()
+            ->column('product_name', 'Product', sortable: true)
+            ->column('customer_name', 'Customer', sortable: true)
+            ->column('rating', 'Rating', sortable: true)
+            ->column('title', 'Title', sortable: true)
+            ->column('is_approved', 'Status', sortable: true)
+            ->column('helpful_count', 'Helpful', sortable: true)
+            ->column('is_verified_purchase', 'Verified')
+            ->column('created_at', 'Date', sortable: true, format: 'date')
+            ->column('actions', '', sortable: false, width: '100px')
+            ->filter('is_approved', 'Status', 'select', [
+                ['value' => '', 'label' => 'All'],
+                ['value' => '1', 'label' => 'Approved'],
+                ['value' => '0', 'label' => 'Pending'],
+            ], 'All')
+            ->filter('rating', 'Rating', 'select', [
+                ['value' => '', 'label' => 'All Ratings'],
+                ['value' => '5', 'label' => '5 Stars'],
+                ['value' => '4', 'label' => '4 Stars'],
+                ['value' => '3', 'label' => '3 Stars'],
+                ['value' => '2', 'label' => '2 Stars'],
+                ['value' => '1', 'label' => '1 Star'],
+            ], 'All Ratings')
+            ->bulkAction('approve', 'Approve')
+            ->bulkAction('unapprove', 'Unapprove')
+            ->bulkAction('delete', 'Delete', destructive: true, confirm: 'Delete selected reviews?')
+            ->searchable(placeholder: 'Search reviews...')
+            ->emptyState('No reviews yet', 'Reviews will appear here when customers leave feedback.')
+            ->sort('created_at', 'desc')
+            ->perPage(20);
 
-        return Inertia::render('products/Reviews', [
+        $data = QueryBuilder::for(ProductReview::class)
+            ->with(['customer:id,first_name,last_name,email', 'product:id,name'])
+            ->allowedFilters([
+                'title',
+                AllowedFilter::exact('rating'),
+                AllowedFilter::exact('is_approved'),
+                AllowedFilter::exact('is_verified_purchase'),
+                AllowedFilter::exact('is_featured'),
+                AllowedFilter::exact('product_id'),
+            ])
+            ->allowedSorts(['created_at', 'rating', 'helpful_count', 'title', 'is_approved', 'is_featured'])
+            ->defaultSort('-created_at')
+            ->paginate($request->input('per_page', 20))
+            ->withQueryString();
+
+        return Inertia::render('reviews/index', [
             'page' => $page->compile(),
+            'listing' => $listing->toArray(),
+            'data' => $data,
         ]);
     }
 
@@ -200,17 +246,26 @@ class ReviewsController extends Controller
     /**
      * Display the specified review
      */
-    public function show(ProductReview $review): JsonResponse
+    public function show(ProductReview $review): \Inertia\Response
     {
         $review->load([
-            'customer:id,name,email',
-            'product:id,name,handle',
+            'customer:id,first_name,last_name,email',
+            'product:id,name',
             'reviewMedia',
-            'votes',
         ]);
 
-        return $this->successResponse([
-            'data' => $review,
+        $page = Page::make($review->title)
+            ->breadcrumb('Home', '/cp')
+            ->breadcrumb('Reviews', '/cp/reviews')
+            ->breadcrumb($review->title)
+            ->secondaryActions([
+                ['label' => $review->is_approved ? 'Unapprove' : 'Approve', 'action' => $review->is_approved ? 'unapprove' : 'approve'],
+                ['label' => 'Delete', 'action' => 'delete', 'destructive' => true],
+            ]);
+
+        return Inertia::render('reviews/show', [
+            'page' => $page->compile(),
+            'review' => $review,
         ]);
     }
 

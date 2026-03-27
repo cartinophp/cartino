@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Cartino\Http\Controllers\Cp;
 
+use Cartino\Cp\Listing;
+use Cartino\Cp\Page;
 use Cartino\Http\Controllers\Controller;
 use Cartino\Http\Controllers\Cp\Concerns\HandlesFlashMessages;
 use Cartino\Http\Requests\DiscountRequest;
@@ -13,6 +15,8 @@ use Cartino\Services\DiscountService;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Inertia\Response;
+use Spatie\QueryBuilder\AllowedFilter;
+use Spatie\QueryBuilder\QueryBuilder;
 
 class DiscountController extends Controller
 {
@@ -24,49 +28,70 @@ class DiscountController extends Controller
 
     public function index(Request $request): Response
     {
-        $query = Discount::with(['applications'])->orderBy('created_at', 'desc');
+        $page = Page::make('Discounts')
+            ->breadcrumb('Home', '/cp')
+            ->breadcrumb('Discounts')
+            ->primaryAction('Add discount', route('cp.discounts.create'));
 
-        // Apply filters
-        if ($request->filled('status')) {
-            if ($request->status === 'active') {
-                $query->where('status', 'active');
-            } elseif ($request->status === 'inactive') {
-                $query->where('status', 'inactive');
-            }
-        }
+        $listing = Listing::make()
+            ->column('name', 'Name', sortable: true)
+            ->column('code', 'Code', sortable: true)
+            ->column('type', 'Type', sortable: true)
+            ->column('value', 'Value', sortable: true)
+            ->column('status', 'Status', sortable: true)
+            ->column('usage_count', 'Uses', sortable: true)
+            ->column('actions', '', sortable: false, width: '100px')
+            ->filter('status', 'Status', 'select', [
+                ['value' => '', 'label' => 'All'],
+                ['value' => 'active', 'label' => 'Active'],
+                ['value' => 'inactive', 'label' => 'Inactive'],
+            ], 'All')
+            ->filter('type', 'Type', 'select', [
+                ['value' => '', 'label' => 'All Types'],
+                ['value' => 'percentage', 'label' => 'Percentage'],
+                ['value' => 'fixed_amount', 'label' => 'Fixed Amount'],
+                ['value' => 'free_shipping', 'label' => 'Free Shipping'],
+            ], 'All Types')
+            ->bulkAction('activate', 'Activate')
+            ->bulkAction('deactivate', 'Deactivate')
+            ->bulkAction('delete', 'Delete', destructive: true, confirm: 'Delete selected discounts?')
+            ->searchable(placeholder: 'Search discounts...')
+            ->emptyState('No discounts yet', 'Create your first discount to attract customers.', ['label' => 'Add discount', 'url' => route('cp.discounts.create')], 'percent')
+            ->sort('created_at', 'desc');
 
-        if ($request->filled('type')) {
-            $query->where('type', $request->type);
-        }
+        $data = QueryBuilder::for(Discount::class)
+            ->with(['applications'])
+            ->allowedFilters([
+                'name', 'code',
+                AllowedFilter::exact('status'),
+                AllowedFilter::exact('type'),
+            ])
+            ->allowedSorts(['name', 'code', 'type', 'status', 'created_at', 'usage_count'])
+            ->defaultSort('-created_at')
+            ->paginate($request->input('per_page', 15))
+            ->withQueryString();
 
-        if ($request->filled('search')) {
-            $search = $request->search;
-            $query->where(function ($q) use ($search) {
-                $q->where('name', 'like', "%{$search}%")->orWhere('code', 'like', "%{$search}%");
-            });
-        }
-
-        $discounts = $query->paginate(15)->withQueryString();
-
-        // Add statistics to each discount
-        $discounts
-            ->getCollection()
-            ->transform(function ($discount) {
-                $discount->statistics = $this->discountService->getDiscountStatistics($discount);
-
-                return $discount;
-            });
-
-        return Inertia::render('Discounts/index', [
-            'discounts' => $discounts,
-            'filters' => $request->only(['status', 'type', 'search']),
-            'statistics' => $this->getOverallStatistics(),
+        return Inertia::render('discounts/index', [
+            'page' => $page->compile(),
+            'listing' => $listing->toArray(),
+            'data' => $data,
         ]);
     }
 
     public function create(): Response
     {
-        return Inertia::render('Discounts/Create', [
+        $page = Page::make('Add discount')
+            ->breadcrumb('Home', '/cp')
+            ->breadcrumb('Discounts', '/cp/discounts')
+            ->breadcrumb('Add discount')
+            ->primaryAction('Save discount', null, ['form' => 'resource-form'])
+            ->secondaryActions([
+                ['label' => 'Save & continue editing', 'action' => 'save_continue'],
+                ['label' => 'Save & add another', 'action' => 'save_add_another'],
+            ]);
+
+        return Inertia::render('discounts/create', [
+            'page' => $page->compile(),
             'discount_types' => $this->getDiscountTypes(),
         ]);
     }
@@ -85,14 +110,38 @@ class DiscountController extends Controller
         $discount->load(['applications.applicable']);
         $discount->statistics = $this->discountService->getDiscountStatistics($discount);
 
-        return Inertia::render('Discounts/Show', [
+        $page = Page::make($discount->name)
+            ->breadcrumb('Home', '/cp')
+            ->breadcrumb('Discounts', '/cp/discounts')
+            ->breadcrumb($discount->name)
+            ->primaryAction('Edit discount', "/cp/discounts/{$discount->id}/edit")
+            ->secondaryActions([
+                ['label' => 'Duplicate', 'action' => 'duplicate'],
+                ['label' => 'Delete', 'action' => 'delete', 'destructive' => true],
+            ]);
+
+        return Inertia::render('discounts/show', [
+            'page' => $page->compile(),
             'discount' => $discount,
         ]);
     }
 
     public function edit(Discount $discount): Response
     {
-        return Inertia::render('Discounts/Edit', [
+        $page = Page::make("Edit {$discount->name}")
+            ->breadcrumb('Home', '/cp')
+            ->breadcrumb('Discounts', '/cp/discounts')
+            ->breadcrumb($discount->name, "/cp/discounts/{$discount->id}")
+            ->breadcrumb('Edit')
+            ->primaryAction('Update discount', null, ['form' => 'resource-form'])
+            ->secondaryActions([
+                ['label' => 'View discount', 'url' => "/cp/discounts/{$discount->id}"],
+                ['label' => 'Duplicate', 'action' => 'duplicate'],
+                ['label' => 'Delete', 'action' => 'delete', 'destructive' => true],
+            ]);
+
+        return Inertia::render('discounts/edit', [
+            'page' => $page->compile(),
             'discount' => $discount,
             'discount_types' => $this->getDiscountTypes(),
         ]);

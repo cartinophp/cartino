@@ -4,15 +4,17 @@ declare(strict_types=1);
 
 namespace Cartino\Http\Controllers\Cp;
 
+use Cartino\Cp\Listing;
 use Cartino\Cp\Page;
 use Cartino\Http\Requests\CP\StoreBrandRequest;
 use Cartino\Http\Requests\CP\UpdateBrandRequest;
-use Cartino\Http\Resources\CP\BrandCollection;
 use Cartino\Http\Resources\CP\BrandResource;
 use Cartino\Models\Brand;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Inertia\Inertia;
 use Inertia\Response;
+use Spatie\QueryBuilder\QueryBuilder;
 
 class BrandsController extends BaseController
 {
@@ -29,27 +31,47 @@ class BrandsController extends BaseController
      */
     public function index(Request $request): Response
     {
-        $this->addDashboardBreadcrumb()->addBreadcrumb('Catalog', 'cp.categories.index')->addBreadcrumb('Brands');
-
-        $filters = $this->getFilters(['search', 'status', 'created_at']);
-
-        $brands = Brand::query()
-            ->withCount('products')
-            ->when($filters, fn ($query) => $this->applyFilters($query, $filters))
-            ->orderBy('name')
-            ->paginate(request('per_page', 15));
-
         $page = Page::make('Brands')
+            ->breadcrumb('Home', '/cp')
+            ->breadcrumb('Catalog', '/cp/categories')
+            ->breadcrumb('Brands')
             ->primaryAction('Add brand', route('cp.brands.create'))
             ->secondaryActions([
-                ['label' => 'Import', 'url' => route('cp.brands.import')],
-                ['label' => 'Export', 'url' => route('cp.brands.export')],
+                ['label' => 'Import', 'url' => '#'],
+                ['label' => 'Export', 'url' => '#'],
             ]);
 
-        return $this->inertiaResponse('brands/index', [
+        $listing = Listing::make()
+            ->column('name', 'Name', sortable: true)
+            ->column('slug', 'Slug')
+            ->column('products_count', 'Products', sortable: true)
+            ->column('status', 'Status', sortable: true)
+            ->column('actions', '', sortable: false, width: '100px')
+            ->filter('status', 'Status', 'select', [
+                ['value' => '', 'label' => 'All'],
+                ['value' => 'active', 'label' => 'Active'],
+                ['value' => 'inactive', 'label' => 'Inactive'],
+            ], 'All')
+            ->bulkAction('enable', 'Enable')
+            ->bulkAction('disable', 'Disable')
+            ->bulkAction('delete', 'Delete', destructive: true, confirm: 'Delete selected brands?')
+            ->bulkAction('export', 'Export')
+            ->searchable(placeholder: 'Search brands...')
+            ->emptyState('No brands yet', 'Add your first brand to organize your products.', ['label' => 'Add brand', 'url' => route('cp.brands.create')], 'tag')
+            ->sort('name', 'asc');
+
+        $data = QueryBuilder::for(Brand::class)
+            ->withCount('products')
+            ->allowedFilters(['name', 'slug', 'status'])
+            ->allowedSorts(['name', 'created_at', 'status', 'products_count'])
+            ->defaultSort('name')
+            ->paginate($request->input('per_page', 15))
+            ->withQueryString();
+
+        return Inertia::render('brands/index', [
             'page' => $page->compile(),
-            'brands' => new BrandCollection($brands),
-            'filters' => $filters,
+            'listing' => $listing->toArray(),
+            'data' => $data,
         ]);
     }
 
@@ -70,7 +92,7 @@ class BrandsController extends BaseController
                 ['label' => 'Save & add another', 'action' => 'save_add_another'],
             ]);
 
-        return $this->inertiaResponse('brands/Create', [
+        return Inertia::render('brands/create', [
             'page' => $page->compile(),
         ]);
     }
@@ -122,7 +144,7 @@ class BrandsController extends BaseController
                 ['label' => 'Delete', 'action' => 'delete', 'destructive' => true],
             ]);
 
-        return $this->inertiaResponse('brands/Show', [
+        return Inertia::render('brands/show', [
             'page' => $page->compile(),
             'brand' => new BrandResource($brand),
         ]);
@@ -159,7 +181,7 @@ class BrandsController extends BaseController
                 'products' => ['label' => 'Products', 'component' => 'BrandProductsForm'],
             ]);
 
-        return $this->inertiaResponse('brands/Edit', [
+        return Inertia::render('brands/edit', [
             'page' => $page->compile(),
             'brand' => new BrandResource($brand),
         ]);

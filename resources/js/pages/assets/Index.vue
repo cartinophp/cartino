@@ -1,58 +1,39 @@
 <template>
-  <div class="assets-index">
-    <h1>Assets Index</h1>
-
-    <div class="debug-props">
-      <h2>Props Data:</h2>
-      <code>{{ JSON.stringify($page.props, null, 2) }}</code>
-    </div>
-  </div>
+  <ListingPage :page="page" :listing="listing" :data="data">
+    <template #cell-thumbnail="{ row }">
+      <div class="asset-thumb">
+        <img v-if="row.type === 'image'" :src="row.url" :alt="row.name" class="thumb-img" />
+        <Icon v-else :name="row.type === 'video' ? 'film' : 'file'" size="24" />
+      </div>
+    </template>
+    <template #cell-size="{ row }">
+      {{ formatSize(row.size) }}
+    </template>
+    <template #cell-actions="{ row }">
+      <div style="display:flex;gap:0.5rem">
+        <Button variant="ghost" size="sm" :href="`/cp/assets/${row.id}`"><Icon name="eye" size="16" /></Button>
+        <Button variant="ghost" size="sm" :href="`/cp/assets/${row.id}/edit`"><Icon name="edit" size="16" /></Button>
+      </div>
+    </template>
+  </ListingPage>
 </template>
 
 <script setup>
-import { usePage } from '@inertiajs/vue3';
+import { Button, Icon } from '@cartino/ui'
+import ListingPage from '@/components/ListingPage.vue'
 
-const props = defineProps({
-  page: Object,
-  containers: Array,
-  currentContainer: String,
-  folders: Array,
-  assets: Object,
-  filters: Object,
-  stats: Object,
-});
+defineProps({ page: Object, listing: Object, data: Object, containers: Array, currentContainer: String })
+
+const formatSize = (bytes) => {
+  if (!bytes) return '0 B'
+  const k = 1024
+  const sizes = ['B', 'KB', 'MB', 'GB']
+  const i = Math.floor(Math.log(bytes) / Math.log(k))
+  return `${parseFloat((bytes / Math.pow(k, i)).toFixed(1))} ${sizes[i]}`
+}
 </script>
 
 <style scoped>
-.assets-index {
-  padding: 2rem;
-}
-
-h1 {
-  font-size: 2rem;
-  margin-bottom: 1rem;
-}
-
-h2 {
-  font-size: 1.5rem;
-  margin: 1rem 0;
-}
-
-.debug-props {
-  background: #f5f5f5;
-  padding: 1rem;
-  border-radius: 8px;
-  margin-top: 2rem;
-}
-
-pre {
-  background: #1e1e1e;
-  color: #d4d4d4;
-  padding: 1rem;
-  border-radius: 4px;
-  overflow-x: auto;
-  font-family: 'Monaco', 'Menlo', 'Courier New', monospace;
-  font-size: 0.875rem;
-  line-height: 1.5;
-}
+.asset-thumb { width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; background: #f3f4f6; border-radius: 0.375rem; overflow: hidden; }
+.thumb-img { width: 100%; height: 100%; object-fit: cover; }
 </style>

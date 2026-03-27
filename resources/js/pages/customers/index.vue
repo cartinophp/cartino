@@ -1,18 +1,24 @@
 <template>
-  <div class="products-index">
-    <h1>Customers</h1>
-    <div class="debug-props">
-      <code>{{ JSON.stringify($page.props, null, 2) }}</code>
-    </div>
-  </div>
+  <ListingPage :page="page" :listing="listing" :data="data" @bulk-action="handleBulkAction">
+    <template #cell-status="{ row }">
+      <Badge :variant="row.is_enabled ? 'success' : 'secondary'">{{ row.is_enabled ? 'Active' : 'Inactive' }}</Badge>
+    </template>
+    <template #cell-actions="{ row }">
+      <div style="display:flex;gap:0.5rem">
+        <Button variant="ghost" size="sm" :href="`/cp/customers/${row.id}`"><Icon name="eye" size="16" /></Button>
+        <Button variant="ghost" size="sm" :href="`/cp/customers/${row.id}/edit`"><Icon name="edit" size="16" /></Button>
+      </div>
+    </template>
+  </ListingPage>
 </template>
 
 <script setup>
-import { usePage } from '@inertiajs/vue3';
-//import {PageHeader} from '@cartino/ui';
+import { router } from '@inertiajs/vue3'
+import { Badge, Button, Icon } from '@cartino/ui'
+import ListingPage from '@/components/ListingPage.vue'
 
-const props = defineProps({
-  // Add props here based on controller
-});
+defineProps({ page: Object, listing: Object, data: Object })
+
+const handleBulkAction = ({ action, ids }) => router.post('/cp/customers/bulk-action', { action, ids })
 </script>
 

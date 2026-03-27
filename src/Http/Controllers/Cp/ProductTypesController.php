@@ -2,6 +2,7 @@
 
 namespace Cartino\Http\Controllers\Cp;
 
+use Cartino\Cp\Listing;
 use Cartino\Cp\Page;
 use Cartino\Http\Controllers\Controller;
 use Cartino\Http\Requests\StoreProductTypeRequest;
@@ -10,6 +11,7 @@ use Cartino\Http\Resources\ProductTypeResource;
 use Cartino\Models\ProductType;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
+use Spatie\QueryBuilder\QueryBuilder;
 
 class ProductTypesController extends Controller
 {
@@ -28,41 +30,33 @@ class ProductTypesController extends Controller
                 ['label' => 'Export', 'url' => '/cp/product-types/export'],
             ]);
 
-        // If AJAX request, return data for DataTable
-        if ($request->expectsJson()) {
-            $query = ProductType::withCount('products');
+        $listing = Listing::make()
+            ->column('name', 'Name', sortable: true)
+            ->column('slug', 'Slug')
+            ->column('products_count', 'Products', sortable: true)
+            ->column('sort_order', 'Order', sortable: true)
+            ->column('created_at', 'Created', sortable: true, format: 'date')
+            ->column('actions', '', sortable: false, width: '100px')
+            ->bulkAction('enable', 'Enable')
+            ->bulkAction('disable', 'Disable')
+            ->bulkAction('delete', 'Delete', destructive: true, confirm: 'Delete selected product types?')
+            ->searchable(placeholder: 'Search product types...')
+            ->emptyState('No product types', 'Create a product type to define product structures.', ['label' => 'Add product type', 'url' => '/cp/product-types/create'], 'layers')
+            ->sort('sort_order', 'asc')
+            ->perPage(20);
 
-            // Search filter
-            if ($search = $request->get('search')) {
-                $query->where(function ($q) use ($search) {
-                    $q->where('name', 'like', "%{$search}%")->orWhere('slug', 'like', "%{$search}%")->orWhere(
-                        'description',
-                        'like',
-                        "%{$search}%",
-                    );
-                });
-            }
-
-            // Sorting
-            $sortBy = $request->get('sort_by', 'sort_order');
-            $sortDirection = $request->get('sort_direction', 'asc');
-
-            $allowedSorts = ['name', 'slug', 'sort_order', 'created_at', 'products_count'];
-            if (in_array($sortBy, $allowedSorts)) {
-                if ($sortBy === 'products_count') {
-                    $query->orderBy('products_count', $sortDirection);
-                } else {
-                    $query->orderBy($sortBy, $sortDirection);
-                }
-            }
-
-            $productTypes = $query->paginate($request->get('per_page', 20));
-
-            return ProductTypeResource::collection($productTypes);
-        }
+        $data = QueryBuilder::for(ProductType::class)
+            ->withCount('products')
+            ->allowedFilters(['name', 'slug'])
+            ->allowedSorts(['name', 'slug', 'sort_order', 'created_at', 'products_count'])
+            ->defaultSort('sort_order')
+            ->paginate($request->input('per_page', 20))
+            ->withQueryString();
 
         return Inertia::render('product-types/index', [
             'page' => $page->compile(),
+            'listing' => $listing->toArray(),
+            'data' => $data,
         ]);
     }
 
@@ -82,7 +76,7 @@ class ProductTypesController extends Controller
                 ['label' => 'Save & add another', 'action' => 'save_add_another'],
             ]);
 
-        return Inertia::render('product-types/Create', [
+        return Inertia::render('product-types/create', [
             'page' => $page->compile(),
         ]);
     }
@@ -135,7 +129,7 @@ class ProductTypesController extends Controller
                 ['label' => 'Delete', 'action' => 'delete', 'destructive' => true],
             ]);
 
-        return Inertia::render('product-types/Show', [
+        return Inertia::render('product-types/show', [
             'page' => $page->compile(),
             'productType' => new ProductTypeResource($productType),
         ]);
@@ -161,7 +155,7 @@ class ProductTypesController extends Controller
                 ['label' => 'Delete', 'action' => 'delete', 'destructive' => true],
             ]);
 
-        return Inertia::render('product-types/Edit', [
+        return Inertia::render('product-types/edit', [
             'page' => $page->compile(),
             'productType' => new ProductTypeResource($productType),
         ]);

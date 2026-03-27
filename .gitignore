@@ -7,3 +7,6 @@ composer.phar
 /node_modules
 
 .DS_Store
+/public/vendor/cartino
+/public/vendor
+/public/vendor
