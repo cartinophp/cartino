@@ -28,9 +28,9 @@ return new class extends Migration
     public function down(): void
     {
         Schema::table('products', function (Blueprint $table) {
-            $table->dropIndex(['products_average_rating_index']);
-            $table->dropIndex(['products_review_count_index']);
-            $table->dropIndex(['products_average_rating_review_count_index']);
+            $table->dropIndex('products_average_rating_index');
+            $table->dropIndex('products_review_count_index');
+            $table->dropIndex('products_average_rating_review_count_index');
             $table->dropColumn(['average_rating', 'review_count']);
         });
     }
