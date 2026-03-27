@@ -18,7 +18,7 @@ if [ ! -z "$files" ]; then
     vendor/bin/pint $files -q
 
     ret=$?
-    if [ $ret -ne 0 ]; then return $ret; fi
+    if [ $ret -ne 0 ]; then exit $ret; fi
 
     git add $files
 fi
