@@ -1,0 +1,99 @@
+title: Shipping
+fields:
+  -
+    handle: requires_shipping
+    field:
+      type: toggle
+      display: 'Requires Shipping'
+      instructions: 'This product requires physical shipping'
+      default: true
+  -
+    handle: weight
+    field:
+      type: float
+      display: Weight
+      instructions: 'Physical weight of the item'
+      validate: numeric|min:0
+      width: 50
+      if:
+        requires_shipping: equals true
+  -
+    handle: weight_unit
+    field:
+      type: select
+      display: 'Weight Unit'
+      options:
+        kg: Kilograms
+        g: Grams
+        lb: Pounds
+        oz: Ounces
+      default: kg
+      width: 50
+      if:
+        requires_shipping: equals true
+  -
+    handle: dimensions
+    field:
+      type: grid
+      display: Dimensions
+      instructions: 'Package dimensions'
+      max_rows: 1
+      if:
+        requires_shipping: equals true
+      fields:
+        -
+          handle: length
+          field:
+            type: float
+            display: Length
+            validate: numeric|min:0
+        -
+          handle: width
+          field:
+            type: float
+            display: Width
+            validate: numeric|min:0
+        -
+          handle: height
+          field:
+            type: float
+            display: Height
+            validate: numeric|min:0
+        -
+          handle: unit
+          field:
+            type: select
+            display: Unit
+            options:
+              cm: Centimeters
+              m: Meters
+              in: Inches
+              ft: Feet
+            default: cm
+  -
+    handle: customs_info
+    field:
+      type: group
+      display: 'Customs Information'
+      instructions: 'Required for international shipping'
+      if:
+        requires_shipping: equals true
+      fields:
+        -
+          handle: hs_code
+          field:
+            type: text
+            display: 'HS Code'
+            instructions: 'Harmonized System tariff code'
+        -
+          handle: country_of_origin
+          field:
+            type: select
+            display: 'Country of Origin'
+            options_url: /api/countries
+        -
+          handle: customs_description
+          field:
+            type: textarea
+            display: 'Customs Description'
+            rows: 2

@@ -1,0 +1,71 @@
+{
+  "name": "@cartinophp/cartino",
+  "version": "1.0.0",
+  "description": "Cartino - Modern Laravel E-commerce Platform with Statamic CMS Architecture & Shopify-like Features",
+  "main": "public/cartino-admin.es.js",
+  "type": "module",
+  "scripts": {
+    "dev": "CARTINO_DEV=true vite",
+    "dev:package": "vite",
+    "build": "vite build",
+    "build:dev": "vite build --mode development",
+    "build:watch": "vite build --watch",
+    "preview": "vite preview",
+    "typecheck": "vue-tsc --noEmit"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/cartinophp/cartino.git"
+  },
+  "keywords": [
+    "laravel",
+    "ecommerce",
+    "vue",
+    "inertia",
+    "shopify",
+    "statamic",
+    "collections",
+    "entries",
+    "fields",
+    "json-schema",
+    "event-emitters"
+  ],
+  "author": "Vitali Jalbu",
+  "license": "MIT",
+  "devDependencies": {
+    "@biomejs/biome": "2.4.9",
+    "@heroicons/vue": "^2.2.0",
+    "@iconify/vue": "^5.0.0",
+    "@inertiajs/vue3": "^3.0.0",
+    "@tailwindcss/vite": "^4.2.2",
+    "@types/node": "^25.5.0",
+    "@vitejs/plugin-vue": "^6.0.5",
+    "@vue/tsconfig": "^0.9.1",
+    "axios": "^1.13.6",
+    "chart.js": "^4.5.1",
+    "pinia": "^3.0.4",
+    "tailwindcss": "^4.2.2",
+    "typescript": "^6.0.2",
+    "vite": "^8.0.3",
+    "vue": "^3.5.31",
+    "vue-chartjs": "^5.3.3",
+    "vue-tsc": "^3.2.6"
+  },
+  "dependencies": {
+    "@cartino/ui": "file:../ui",
+    "@tanstack/vue-table": "^8.21.3",
+    "@vueuse/core": "^14.2.1",
+    "chart.js": "^4.5.1",
+    "clsx": "^2.1.1",
+    "date-fns": "^4.1.0",
+    "fuse.js": "^7.1.0",
+    "lodash": "^4.17.23",
+    "lodash-es": "^4.17.23",
+    "lucide-vue-next": "^1.0.0",
+    "reka-ui": "^2.9.2",
+    "tailwind-merge": "^3.5.0",
+    "vue-chartjs": "^5.3.3",
+    "vue-draggable-plus": "^0.6.1",
+    "ziggy-js": "^2.6.2"
+  }
+}

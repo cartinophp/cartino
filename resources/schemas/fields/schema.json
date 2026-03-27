@@ -1,0 +1,65 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "title": "Product Custom Fields Schema",
+  "description": "Schema for defining custom fields for products",
+  "properties": {
+    "fields": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "Field name (used as key)"
+          },
+          "label": {
+            "type": "string", 
+            "description": "Human readable label"
+          },
+          "type": {
+            "type": "string",
+            "enum": ["text", "textarea", "number", "boolean", "select", "multi_select", "date", "datetime", "url", "email", "image", "file", "rich_text", "json"],
+            "description": "Field type"
+          },
+          "required": {
+            "type": "boolean",
+            "default": false
+          },
+          "validation": {
+            "type": "object",
+            "properties": {
+              "min": {"type": "number"},
+              "max": {"type": "number"},
+              "pattern": {"type": "string"},
+              "options": {
+                "type": "array",
+                "items": {"type": "string"}
+              }
+            }
+          },
+          "default": {
+            "description": "Default value"
+          },
+          "help": {
+            "type": "string",
+            "description": "Help text for the field"
+          },
+          "group": {
+            "type": "string",
+            "description": "Field group for organization"
+          },
+          "conditional": {
+            "type": "object",
+            "properties": {
+              "field": {"type": "string"},
+              "operator": {"type": "string", "enum": ["=", "!=", ">", "<", ">=", "<=", "contains", "not_contains"]},
+              "value": {}
+            }
+          }
+        },
+        "required": ["name", "label", "type"]
+      }
+    }
+  }
+}

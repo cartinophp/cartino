@@ -1,0 +1,234 @@
+title: Page
+sections:
+  main:
+    display: Main
+    fields:
+      -
+        handle: title
+        field:
+          type: text
+          display: Title
+          validate: required
+          width: 50
+      -
+        handle: slug
+        field:
+          type: slug
+          display: Slug
+          from: title
+          validate: required
+          width: 50
+      -
+        handle: parent_id
+        field:
+          type: relationship
+          display: 'Parent Page'
+          resource: pages
+          max_items: 1
+          instructions: 'Create a page hierarchy'
+      -
+        handle: template
+        field:
+          type: template
+          display: Template
+          instructions: 'Blade template to use for rendering'
+      -
+        handle: layout
+        field:
+          type: select
+          display: Layout
+          options:
+            default: Default
+            full_width: 'Full Width'
+            sidebar_left: 'Sidebar Left'
+            sidebar_right: 'Sidebar Right'
+          default: default
+  
+  content:
+    display: Content
+    fields:
+      -
+        handle: excerpt
+        field:
+          type: textarea
+          display: Excerpt
+          instructions: 'Short summary of the page'
+          rows: 3
+      -
+        handle: content
+        field:
+          type: markdown
+          display: Content
+          instructions: 'Main page content'
+          container: assets
+          folder: pages
+          restrict_assets: false
+          buttons:
+            - h1
+            - h2
+            - h3
+            - bold
+            - italic
+            - unorderedlist
+            - orderedlist
+            - link
+            - image
+            - quote
+            - code
+            - table
+      -
+        handle: blocks_data
+        field:
+          type: replicator
+          display: 'Content Blocks'
+          instructions: 'Build your page with flexible content blocks'
+          sets:
+            text:
+              display: Text
+              fields:
+                -
+                  handle: content
+                  field:
+                    type: markdown
+                    display: Content
+            image:
+              display: Image
+              fields:
+                -
+                  handle: image
+                  field:
+                    type: assets
+                    display: Image
+                    max_files: 1
+                -
+                  handle: caption
+                  field:
+                    type: text
+                    display: Caption
+            hero:
+              display: Hero
+              fields:
+                -
+                  handle: title
+                  field:
+                    type: text
+                    display: Title
+                -
+                  handle: subtitle
+                  field:
+                    type: text
+                    display: Subtitle
+                -
+                  handle: background
+                  field:
+                    type: assets
+                    display: Background
+                    max_files: 1
+            cta:
+              display: 'Call to Action'
+              fields:
+                -
+                  handle: title
+                  field:
+                    type: text
+                    display: Title
+                -
+                  handle: description
+                  field:
+                    type: textarea
+                    display: Description
+                -
+                  handle: button_text
+                  field:
+                    type: text
+                    display: 'Button Text'
+                -
+                  handle: button_url
+                  field:
+                    type: text
+                    display: 'Button URL'
+  
+  media:
+    display: Media
+    fields:
+      -
+        handle: hero_image
+        field:
+          type: assets
+          display: 'Hero Image'
+          container: pages
+          max_files: 1
+      -
+        handle: show_title
+        field:
+          type: toggle
+          display: 'Show Title'
+          default: true
+          instructions: 'Display the page title on the page'
+  
+  seo:
+    display: SEO
+    fields:
+      -
+        handle: seo_title
+        field:
+          type: text
+          display: 'SEO Title'
+          character_limit: 60
+      -
+        handle: seo_description
+        field:
+          type: textarea
+          display: 'SEO Description'
+          character_limit: 160
+          rows: 3
+      -
+        handle: seo
+        field:
+          type: seo
+          display: 'Advanced SEO'
+          fields:
+            - og_image
+            - twitter_card
+            - canonical_url
+            - robots
+  
+  sidebar:
+    display: Publishing
+    fields:
+      -
+        handle: status
+        field:
+          type: select
+          display: Status
+          options:
+            draft: Draft
+            published: Published
+            private: Private
+            scheduled: Scheduled
+          default: draft
+          validate: required
+      -
+        handle: published_at
+        field:
+          type: date
+          display: 'Published Date'
+          mode: single
+          time_enabled: true
+          instructions: 'When to publish this page'
+      -
+        handle: scheduled_at
+        field:
+          type: date
+          display: 'Scheduled Date'
+          mode: single
+          time_enabled: true
+          if:
+            status: equals scheduled
+      -
+        handle: author_id
+        field:
+          type: relationship
+          display: Author
+          resource: users
+          max_items: 1

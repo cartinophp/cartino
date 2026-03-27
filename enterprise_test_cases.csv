@@ -1,0 +1,201 @@
+Feature / Case,Descrizione / Flusso,Tipo / Scenario
+Multi-site con cataloghi separati #1,"Crea due siti, ognuno con catalogo indipendente, prodotti diversi, verifica REST API /catalogs?site=siteA / siteB (instance 1)",Multi-market
+Multi-market pricing & rules #1,"Prezzi e regole tariffarie diverse per mercato, verifica REST API /products?market=FR / IT (instance 1)",Multi-market
+Multi-currency catalog display #1,Visualizza catalogo in diverse valute via API /products?currency=USD/EUR (instance 1),Catalog
+B2B company accounts #1,"Crea company con più buyer, verifica approvazione ordine e quote via API (instance 1)",B2B
+B2B checkout approval flow #1,Buyer crea ordine → Manager approva/rifiuta → stato aggiornato → API notifica outcome (instance 1),B2B
+B2C standard checkout #1,Flow checkout semplice con REST API /checkout/step/address → /payment → /confirm (instance 1),B2C
+Custom checkout step #1,Aggiungi step custom (es. selezione centro ritiro) e verifica che sia eseguito correttamente (instance 1),B2C/B2B
+Order status dynamic pipeline #1,Stati ordine come dato → pipeline registry → ogni stato richiama handler specifico (instance 1),Workflow
+Payment status dynamic pipeline #1,Pagamento completato/fallito → pipeline dinamica → invio eventi/webhook (instance 1),Workflow
+Product variants with attributes #1,"Prodotto con varianti multiple, filtri per attributo via API /products?size=L&color=red (instance 1)",Catalog
+Multi-site con cataloghi separati #2,"Crea due siti, ognuno con catalogo indipendente, prodotti diversi, verifica REST API /catalogs?site=siteA / siteB (instance 2)",Multi-market
+Multi-market pricing & rules #2,"Prezzi e regole tariffarie diverse per mercato, verifica REST API /products?market=FR / IT (instance 2)",Multi-market
+Multi-currency catalog display #2,Visualizza catalogo in diverse valute via API /products?currency=USD/EUR (instance 2),Catalog
+B2B company accounts #2,"Crea company con più buyer, verifica approvazione ordine e quote via API (instance 2)",B2B
+B2B checkout approval flow #2,Buyer crea ordine → Manager approva/rifiuta → stato aggiornato → API notifica outcome (instance 2),B2B
+B2C standard checkout #2,Flow checkout semplice con REST API /checkout/step/address → /payment → /confirm (instance 2),B2C
+Custom checkout step #2,Aggiungi step custom (es. selezione centro ritiro) e verifica che sia eseguito correttamente (instance 2),B2C/B2B
+Order status dynamic pipeline #2,Stati ordine come dato → pipeline registry → ogni stato richiama handler specifico (instance 2),Workflow
+Payment status dynamic pipeline #2,Pagamento completato/fallito → pipeline dinamica → invio eventi/webhook (instance 2),Workflow
+Product variants with attributes #2,"Prodotto con varianti multiple, filtri per attributo via API /products?size=L&color=red (instance 2)",Catalog
+Multi-site con cataloghi separati #3,"Crea due siti, ognuno con catalogo indipendente, prodotti diversi, verifica REST API /catalogs?site=siteA / siteB (instance 3)",Multi-market
+Multi-market pricing & rules #3,"Prezzi e regole tariffarie diverse per mercato, verifica REST API /products?market=FR / IT (instance 3)",Multi-market
+Multi-currency catalog display #3,Visualizza catalogo in diverse valute via API /products?currency=USD/EUR (instance 3),Catalog
+B2B company accounts #3,"Crea company con più buyer, verifica approvazione ordine e quote via API (instance 3)",B2B
+B2B checkout approval flow #3,Buyer crea ordine → Manager approva/rifiuta → stato aggiornato → API notifica outcome (instance 3),B2B
+B2C standard checkout #3,Flow checkout semplice con REST API /checkout/step/address → /payment → /confirm (instance 3),B2C
+Custom checkout step #3,Aggiungi step custom (es. selezione centro ritiro) e verifica che sia eseguito correttamente (instance 3),B2C/B2B
+Order status dynamic pipeline #3,Stati ordine come dato → pipeline registry → ogni stato richiama handler specifico (instance 3),Workflow
+Payment status dynamic pipeline #3,Pagamento completato/fallito → pipeline dinamica → invio eventi/webhook (instance 3),Workflow
+Product variants with attributes #3,"Prodotto con varianti multiple, filtri per attributo via API /products?size=L&color=red (instance 3)",Catalog
+Multi-site con cataloghi separati #4,"Crea due siti, ognuno con catalogo indipendente, prodotti diversi, verifica REST API /catalogs?site=siteA / siteB (instance 4)",Multi-market
+Multi-market pricing & rules #4,"Prezzi e regole tariffarie diverse per mercato, verifica REST API /products?market=FR / IT (instance 4)",Multi-market
+Multi-currency catalog display #4,Visualizza catalogo in diverse valute via API /products?currency=USD/EUR (instance 4),Catalog
+B2B company accounts #4,"Crea company con più buyer, verifica approvazione ordine e quote via API (instance 4)",B2B
+B2B checkout approval flow #4,Buyer crea ordine → Manager approva/rifiuta → stato aggiornato → API notifica outcome (instance 4),B2B
+B2C standard checkout #4,Flow checkout semplice con REST API /checkout/step/address → /payment → /confirm (instance 4),B2C
+Custom checkout step #4,Aggiungi step custom (es. selezione centro ritiro) e verifica che sia eseguito correttamente (instance 4),B2C/B2B
+Order status dynamic pipeline #4,Stati ordine come dato → pipeline registry → ogni stato richiama handler specifico (instance 4),Workflow
+Payment status dynamic pipeline #4,Pagamento completato/fallito → pipeline dinamica → invio eventi/webhook (instance 4),Workflow
+Product variants with attributes #4,"Prodotto con varianti multiple, filtri per attributo via API /products?size=L&color=red (instance 4)",Catalog
+Multi-site con cataloghi separati #5,"Crea due siti, ognuno con catalogo indipendente, prodotti diversi, verifica REST API /catalogs?site=siteA / siteB (instance 5)",Multi-market
+Multi-market pricing & rules #5,"Prezzi e regole tariffarie diverse per mercato, verifica REST API /products?market=FR / IT (instance 5)",Multi-market
+Multi-currency catalog display #5,Visualizza catalogo in diverse valute via API /products?currency=USD/EUR (instance 5),Catalog
+B2B company accounts #5,"Crea company con più buyer, verifica approvazione ordine e quote via API (instance 5)",B2B
+B2B checkout approval flow #5,Buyer crea ordine → Manager approva/rifiuta → stato aggiornato → API notifica outcome (instance 5),B2B
+B2C standard checkout #5,Flow checkout semplice con REST API /checkout/step/address → /payment → /confirm (instance 5),B2C
+Custom checkout step #5,Aggiungi step custom (es. selezione centro ritiro) e verifica che sia eseguito correttamente (instance 5),B2C/B2B
+Order status dynamic pipeline #5,Stati ordine come dato → pipeline registry → ogni stato richiama handler specifico (instance 5),Workflow
+Payment status dynamic pipeline #5,Pagamento completato/fallito → pipeline dinamica → invio eventi/webhook (instance 5),Workflow
+Product variants with attributes #5,"Prodotto con varianti multiple, filtri per attributo via API /products?size=L&color=red (instance 5)",Catalog
+Multi-site con cataloghi separati #6,"Crea due siti, ognuno con catalogo indipendente, prodotti diversi, verifica REST API /catalogs?site=siteA / siteB (instance 6)",Multi-market
+Multi-market pricing & rules #6,"Prezzi e regole tariffarie diverse per mercato, verifica REST API /products?market=FR / IT (instance 6)",Multi-market
+Multi-currency catalog display #6,Visualizza catalogo in diverse valute via API /products?currency=USD/EUR (instance 6),Catalog
+B2B company accounts #6,"Crea company con più buyer, verifica approvazione ordine e quote via API (instance 6)",B2B
+B2B checkout approval flow #6,Buyer crea ordine → Manager approva/rifiuta → stato aggiornato → API notifica outcome (instance 6),B2B
+B2C standard checkout #6,Flow checkout semplice con REST API /checkout/step/address → /payment → /confirm (instance 6),B2C
+Custom checkout step #6,Aggiungi step custom (es. selezione centro ritiro) e verifica che sia eseguito correttamente (instance 6),B2C/B2B
+Order status dynamic pipeline #6,Stati ordine come dato → pipeline registry → ogni stato richiama handler specifico (instance 6),Workflow
+Payment status dynamic pipeline #6,Pagamento completato/fallito → pipeline dinamica → invio eventi/webhook (instance 6),Workflow
+Product variants with attributes #6,"Prodotto con varianti multiple, filtri per attributo via API /products?size=L&color=red (instance 6)",Catalog
+Multi-site con cataloghi separati #7,"Crea due siti, ognuno con catalogo indipendente, prodotti diversi, verifica REST API /catalogs?site=siteA / siteB (instance 7)",Multi-market
+Multi-market pricing & rules #7,"Prezzi e regole tariffarie diverse per mercato, verifica REST API /products?market=FR / IT (instance 7)",Multi-market
+Multi-currency catalog display #7,Visualizza catalogo in diverse valute via API /products?currency=USD/EUR (instance 7),Catalog
+B2B company accounts #7,"Crea company con più buyer, verifica approvazione ordine e quote via API (instance 7)",B2B
+B2B checkout approval flow #7,Buyer crea ordine → Manager approva/rifiuta → stato aggiornato → API notifica outcome (instance 7),B2B
+B2C standard checkout #7,Flow checkout semplice con REST API /checkout/step/address → /payment → /confirm (instance 7),B2C
+Custom checkout step #7,Aggiungi step custom (es. selezione centro ritiro) e verifica che sia eseguito correttamente (instance 7),B2C/B2B
+Order status dynamic pipeline #7,Stati ordine come dato → pipeline registry → ogni stato richiama handler specifico (instance 7),Workflow
+Payment status dynamic pipeline #7,Pagamento completato/fallito → pipeline dinamica → invio eventi/webhook (instance 7),Workflow
+Product variants with attributes #7,"Prodotto con varianti multiple, filtri per attributo via API /products?size=L&color=red (instance 7)",Catalog
+Multi-site con cataloghi separati #8,"Crea due siti, ognuno con catalogo indipendente, prodotti diversi, verifica REST API /catalogs?site=siteA / siteB (instance 8)",Multi-market
+Multi-market pricing & rules #8,"Prezzi e regole tariffarie diverse per mercato, verifica REST API /products?market=FR / IT (instance 8)",Multi-market
+Multi-currency catalog display #8,Visualizza catalogo in diverse valute via API /products?currency=USD/EUR (instance 8),Catalog
+B2B company accounts #8,"Crea company con più buyer, verifica approvazione ordine e quote via API (instance 8)",B2B
+B2B checkout approval flow #8,Buyer crea ordine → Manager approva/rifiuta → stato aggiornato → API notifica outcome (instance 8),B2B
+B2C standard checkout #8,Flow checkout semplice con REST API /checkout/step/address → /payment → /confirm (instance 8),B2C
+Custom checkout step #8,Aggiungi step custom (es. selezione centro ritiro) e verifica che sia eseguito correttamente (instance 8),B2C/B2B
+Order status dynamic pipeline #8,Stati ordine come dato → pipeline registry → ogni stato richiama handler specifico (instance 8),Workflow
+Payment status dynamic pipeline #8,Pagamento completato/fallito → pipeline dinamica → invio eventi/webhook (instance 8),Workflow
+Product variants with attributes #8,"Prodotto con varianti multiple, filtri per attributo via API /products?size=L&color=red (instance 8)",Catalog
+Multi-site con cataloghi separati #9,"Crea due siti, ognuno con catalogo indipendente, prodotti diversi, verifica REST API /catalogs?site=siteA / siteB (instance 9)",Multi-market
+Multi-market pricing & rules #9,"Prezzi e regole tariffarie diverse per mercato, verifica REST API /products?market=FR / IT (instance 9)",Multi-market
+Multi-currency catalog display #9,Visualizza catalogo in diverse valute via API /products?currency=USD/EUR (instance 9),Catalog
+B2B company accounts #9,"Crea company con più buyer, verifica approvazione ordine e quote via API (instance 9)",B2B
+B2B checkout approval flow #9,Buyer crea ordine → Manager approva/rifiuta → stato aggiornato → API notifica outcome (instance 9),B2B
+B2C standard checkout #9,Flow checkout semplice con REST API /checkout/step/address → /payment → /confirm (instance 9),B2C
+Custom checkout step #9,Aggiungi step custom (es. selezione centro ritiro) e verifica che sia eseguito correttamente (instance 9),B2C/B2B
+Order status dynamic pipeline #9,Stati ordine come dato → pipeline registry → ogni stato richiama handler specifico (instance 9),Workflow
+Payment status dynamic pipeline #9,Pagamento completato/fallito → pipeline dinamica → invio eventi/webhook (instance 9),Workflow
+Product variants with attributes #9,"Prodotto con varianti multiple, filtri per attributo via API /products?size=L&color=red (instance 9)",Catalog
+Multi-site con cataloghi separati #10,"Crea due siti, ognuno con catalogo indipendente, prodotti diversi, verifica REST API /catalogs?site=siteA / siteB (instance 10)",Multi-market
+Multi-market pricing & rules #10,"Prezzi e regole tariffarie diverse per mercato, verifica REST API /products?market=FR / IT (instance 10)",Multi-market
+Multi-currency catalog display #10,Visualizza catalogo in diverse valute via API /products?currency=USD/EUR (instance 10),Catalog
+B2B company accounts #10,"Crea company con più buyer, verifica approvazione ordine e quote via API (instance 10)",B2B
+B2B checkout approval flow #10,Buyer crea ordine → Manager approva/rifiuta → stato aggiornato → API notifica outcome (instance 10),B2B
+B2C standard checkout #10,Flow checkout semplice con REST API /checkout/step/address → /payment → /confirm (instance 10),B2C
+Custom checkout step #10,Aggiungi step custom (es. selezione centro ritiro) e verifica che sia eseguito correttamente (instance 10),B2C/B2B
+Order status dynamic pipeline #10,Stati ordine come dato → pipeline registry → ogni stato richiama handler specifico (instance 10),Workflow
+Payment status dynamic pipeline #10,Pagamento completato/fallito → pipeline dinamica → invio eventi/webhook (instance 10),Workflow
+Product variants with attributes #10,"Prodotto con varianti multiple, filtri per attributo via API /products?size=L&color=red (instance 10)",Catalog
+Multi-site con cataloghi separati #11,"Crea due siti, ognuno con catalogo indipendente, prodotti diversi, verifica REST API /catalogs?site=siteA / siteB (instance 11)",Multi-market
+Multi-market pricing & rules #11,"Prezzi e regole tariffarie diverse per mercato, verifica REST API /products?market=FR / IT (instance 11)",Multi-market
+Multi-currency catalog display #11,Visualizza catalogo in diverse valute via API /products?currency=USD/EUR (instance 11),Catalog
+B2B company accounts #11,"Crea company con più buyer, verifica approvazione ordine e quote via API (instance 11)",B2B
+B2B checkout approval flow #11,Buyer crea ordine → Manager approva/rifiuta → stato aggiornato → API notifica outcome (instance 11),B2B
+B2C standard checkout #11,Flow checkout semplice con REST API /checkout/step/address → /payment → /confirm (instance 11),B2C
+Custom checkout step #11,Aggiungi step custom (es. selezione centro ritiro) e verifica che sia eseguito correttamente (instance 11),B2C/B2B
+Order status dynamic pipeline #11,Stati ordine come dato → pipeline registry → ogni stato richiama handler specifico (instance 11),Workflow
+Payment status dynamic pipeline #11,Pagamento completato/fallito → pipeline dinamica → invio eventi/webhook (instance 11),Workflow
+Product variants with attributes #11,"Prodotto con varianti multiple, filtri per attributo via API /products?size=L&color=red (instance 11)",Catalog
+Multi-site con cataloghi separati #12,"Crea due siti, ognuno con catalogo indipendente, prodotti diversi, verifica REST API /catalogs?site=siteA / siteB (instance 12)",Multi-market
+Multi-market pricing & rules #12,"Prezzi e regole tariffarie diverse per mercato, verifica REST API /products?market=FR / IT (instance 12)",Multi-market
+Multi-currency catalog display #12,Visualizza catalogo in diverse valute via API /products?currency=USD/EUR (instance 12),Catalog
+B2B company accounts #12,"Crea company con più buyer, verifica approvazione ordine e quote via API (instance 12)",B2B
+B2B checkout approval flow #12,Buyer crea ordine → Manager approva/rifiuta → stato aggiornato → API notifica outcome (instance 12),B2B
+B2C standard checkout #12,Flow checkout semplice con REST API /checkout/step/address → /payment → /confirm (instance 12),B2C
+Custom checkout step #12,Aggiungi step custom (es. selezione centro ritiro) e verifica che sia eseguito correttamente (instance 12),B2C/B2B
+Order status dynamic pipeline #12,Stati ordine come dato → pipeline registry → ogni stato richiama handler specifico (instance 12),Workflow
+Payment status dynamic pipeline #12,Pagamento completato/fallito → pipeline dinamica → invio eventi/webhook (instance 12),Workflow
+Product variants with attributes #12,"Prodotto con varianti multiple, filtri per attributo via API /products?size=L&color=red (instance 12)",Catalog
+Multi-site con cataloghi separati #13,"Crea due siti, ognuno con catalogo indipendente, prodotti diversi, verifica REST API /catalogs?site=siteA / siteB (instance 13)",Multi-market
+Multi-market pricing & rules #13,"Prezzi e regole tariffarie diverse per mercato, verifica REST API /products?market=FR / IT (instance 13)",Multi-market
+Multi-currency catalog display #13,Visualizza catalogo in diverse valute via API /products?currency=USD/EUR (instance 13),Catalog
+B2B company accounts #13,"Crea company con più buyer, verifica approvazione ordine e quote via API (instance 13)",B2B
+B2B checkout approval flow #13,Buyer crea ordine → Manager approva/rifiuta → stato aggiornato → API notifica outcome (instance 13),B2B
+B2C standard checkout #13,Flow checkout semplice con REST API /checkout/step/address → /payment → /confirm (instance 13),B2C
+Custom checkout step #13,Aggiungi step custom (es. selezione centro ritiro) e verifica che sia eseguito correttamente (instance 13),B2C/B2B
+Order status dynamic pipeline #13,Stati ordine come dato → pipeline registry → ogni stato richiama handler specifico (instance 13),Workflow
+Payment status dynamic pipeline #13,Pagamento completato/fallito → pipeline dinamica → invio eventi/webhook (instance 13),Workflow
+Product variants with attributes #13,"Prodotto con varianti multiple, filtri per attributo via API /products?size=L&color=red (instance 13)",Catalog
+Multi-site con cataloghi separati #14,"Crea due siti, ognuno con catalogo indipendente, prodotti diversi, verifica REST API /catalogs?site=siteA / siteB (instance 14)",Multi-market
+Multi-market pricing & rules #14,"Prezzi e regole tariffarie diverse per mercato, verifica REST API /products?market=FR / IT (instance 14)",Multi-market
+Multi-currency catalog display #14,Visualizza catalogo in diverse valute via API /products?currency=USD/EUR (instance 14),Catalog
+B2B company accounts #14,"Crea company con più buyer, verifica approvazione ordine e quote via API (instance 14)",B2B
+B2B checkout approval flow #14,Buyer crea ordine → Manager approva/rifiuta → stato aggiornato → API notifica outcome (instance 14),B2B
+B2C standard checkout #14,Flow checkout semplice con REST API /checkout/step/address → /payment → /confirm (instance 14),B2C
+Custom checkout step #14,Aggiungi step custom (es. selezione centro ritiro) e verifica che sia eseguito correttamente (instance 14),B2C/B2B
+Order status dynamic pipeline #14,Stati ordine come dato → pipeline registry → ogni stato richiama handler specifico (instance 14),Workflow
+Payment status dynamic pipeline #14,Pagamento completato/fallito → pipeline dinamica → invio eventi/webhook (instance 14),Workflow
+Product variants with attributes #14,"Prodotto con varianti multiple, filtri per attributo via API /products?size=L&color=red (instance 14)",Catalog
+Multi-site con cataloghi separati #15,"Crea due siti, ognuno con catalogo indipendente, prodotti diversi, verifica REST API /catalogs?site=siteA / siteB (instance 15)",Multi-market
+Multi-market pricing & rules #15,"Prezzi e regole tariffarie diverse per mercato, verifica REST API /products?market=FR / IT (instance 15)",Multi-market
+Multi-currency catalog display #15,Visualizza catalogo in diverse valute via API /products?currency=USD/EUR (instance 15),Catalog
+B2B company accounts #15,"Crea company con più buyer, verifica approvazione ordine e quote via API (instance 15)",B2B
+B2B checkout approval flow #15,Buyer crea ordine → Manager approva/rifiuta → stato aggiornato → API notifica outcome (instance 15),B2B
+B2C standard checkout #15,Flow checkout semplice con REST API /checkout/step/address → /payment → /confirm (instance 15),B2C
+Custom checkout step #15,Aggiungi step custom (es. selezione centro ritiro) e verifica che sia eseguito correttamente (instance 15),B2C/B2B
+Order status dynamic pipeline #15,Stati ordine come dato → pipeline registry → ogni stato richiama handler specifico (instance 15),Workflow
+Payment status dynamic pipeline #15,Pagamento completato/fallito → pipeline dinamica → invio eventi/webhook (instance 15),Workflow
+Product variants with attributes #15,"Prodotto con varianti multiple, filtri per attributo via API /products?size=L&color=red (instance 15)",Catalog
+Multi-site con cataloghi separati #16,"Crea due siti, ognuno con catalogo indipendente, prodotti diversi, verifica REST API /catalogs?site=siteA / siteB (instance 16)",Multi-market
+Multi-market pricing & rules #16,"Prezzi e regole tariffarie diverse per mercato, verifica REST API /products?market=FR / IT (instance 16)",Multi-market
+Multi-currency catalog display #16,Visualizza catalogo in diverse valute via API /products?currency=USD/EUR (instance 16),Catalog
+B2B company accounts #16,"Crea company con più buyer, verifica approvazione ordine e quote via API (instance 16)",B2B
+B2B checkout approval flow #16,Buyer crea ordine → Manager approva/rifiuta → stato aggiornato → API notifica outcome (instance 16),B2B
+B2C standard checkout #16,Flow checkout semplice con REST API /checkout/step/address → /payment → /confirm (instance 16),B2C
+Custom checkout step #16,Aggiungi step custom (es. selezione centro ritiro) e verifica che sia eseguito correttamente (instance 16),B2C/B2B
+Order status dynamic pipeline #16,Stati ordine come dato → pipeline registry → ogni stato richiama handler specifico (instance 16),Workflow
+Payment status dynamic pipeline #16,Pagamento completato/fallito → pipeline dinamica → invio eventi/webhook (instance 16),Workflow
+Product variants with attributes #16,"Prodotto con varianti multiple, filtri per attributo via API /products?size=L&color=red (instance 16)",Catalog
+Multi-site con cataloghi separati #17,"Crea due siti, ognuno con catalogo indipendente, prodotti diversi, verifica REST API /catalogs?site=siteA / siteB (instance 17)",Multi-market
+Multi-market pricing & rules #17,"Prezzi e regole tariffarie diverse per mercato, verifica REST API /products?market=FR / IT (instance 17)",Multi-market
+Multi-currency catalog display #17,Visualizza catalogo in diverse valute via API /products?currency=USD/EUR (instance 17),Catalog
+B2B company accounts #17,"Crea company con più buyer, verifica approvazione ordine e quote via API (instance 17)",B2B
+B2B checkout approval flow #17,Buyer crea ordine → Manager approva/rifiuta → stato aggiornato → API notifica outcome (instance 17),B2B
+B2C standard checkout #17,Flow checkout semplice con REST API /checkout/step/address → /payment → /confirm (instance 17),B2C
+Custom checkout step #17,Aggiungi step custom (es. selezione centro ritiro) e verifica che sia eseguito correttamente (instance 17),B2C/B2B
+Order status dynamic pipeline #17,Stati ordine come dato → pipeline registry → ogni stato richiama handler specifico (instance 17),Workflow
+Payment status dynamic pipeline #17,Pagamento completato/fallito → pipeline dinamica → invio eventi/webhook (instance 17),Workflow
+Product variants with attributes #17,"Prodotto con varianti multiple, filtri per attributo via API /products?size=L&color=red (instance 17)",Catalog
+Multi-site con cataloghi separati #18,"Crea due siti, ognuno con catalogo indipendente, prodotti diversi, verifica REST API /catalogs?site=siteA / siteB (instance 18)",Multi-market
+Multi-market pricing & rules #18,"Prezzi e regole tariffarie diverse per mercato, verifica REST API /products?market=FR / IT (instance 18)",Multi-market
+Multi-currency catalog display #18,Visualizza catalogo in diverse valute via API /products?currency=USD/EUR (instance 18),Catalog
+B2B company accounts #18,"Crea company con più buyer, verifica approvazione ordine e quote via API (instance 18)",B2B
+B2B checkout approval flow #18,Buyer crea ordine → Manager approva/rifiuta → stato aggiornato → API notifica outcome (instance 18),B2B
+B2C standard checkout #18,Flow checkout semplice con REST API /checkout/step/address → /payment → /confirm (instance 18),B2C
+Custom checkout step #18,Aggiungi step custom (es. selezione centro ritiro) e verifica che sia eseguito correttamente (instance 18),B2C/B2B
+Order status dynamic pipeline #18,Stati ordine come dato → pipeline registry → ogni stato richiama handler specifico (instance 18),Workflow
+Payment status dynamic pipeline #18,Pagamento completato/fallito → pipeline dinamica → invio eventi/webhook (instance 18),Workflow
+Product variants with attributes #18,"Prodotto con varianti multiple, filtri per attributo via API /products?size=L&color=red (instance 18)",Catalog
+Multi-site con cataloghi separati #19,"Crea due siti, ognuno con catalogo indipendente, prodotti diversi, verifica REST API /catalogs?site=siteA / siteB (instance 19)",Multi-market
+Multi-market pricing & rules #19,"Prezzi e regole tariffarie diverse per mercato, verifica REST API /products?market=FR / IT (instance 19)",Multi-market
+Multi-currency catalog display #19,Visualizza catalogo in diverse valute via API /products?currency=USD/EUR (instance 19),Catalog
+B2B company accounts #19,"Crea company con più buyer, verifica approvazione ordine e quote via API (instance 19)",B2B
+B2B checkout approval flow #19,Buyer crea ordine → Manager approva/rifiuta → stato aggiornato → API notifica outcome (instance 19),B2B
+B2C standard checkout #19,Flow checkout semplice con REST API /checkout/step/address → /payment → /confirm (instance 19),B2C
+Custom checkout step #19,Aggiungi step custom (es. selezione centro ritiro) e verifica che sia eseguito correttamente (instance 19),B2C/B2B
+Order status dynamic pipeline #19,Stati ordine come dato → pipeline registry → ogni stato richiama handler specifico (instance 19),Workflow
+Payment status dynamic pipeline #19,Pagamento completato/fallito → pipeline dinamica → invio eventi/webhook (instance 19),Workflow
+Product variants with attributes #19,"Prodotto con varianti multiple, filtri per attributo via API /products?size=L&color=red (instance 19)",Catalog
+Multi-site con cataloghi separati #20,"Crea due siti, ognuno con catalogo indipendente, prodotti diversi, verifica REST API /catalogs?site=siteA / siteB (instance 20)",Multi-market
+Multi-market pricing & rules #20,"Prezzi e regole tariffarie diverse per mercato, verifica REST API /products?market=FR / IT (instance 20)",Multi-market
+Multi-currency catalog display #20,Visualizza catalogo in diverse valute via API /products?currency=USD/EUR (instance 20),Catalog
+B2B company accounts #20,"Crea company con più buyer, verifica approvazione ordine e quote via API (instance 20)",B2B
+B2B checkout approval flow #20,Buyer crea ordine → Manager approva/rifiuta → stato aggiornato → API notifica outcome (instance 20),B2B
+B2C standard checkout #20,Flow checkout semplice con REST API /checkout/step/address → /payment → /confirm (instance 20),B2C
+Custom checkout step #20,Aggiungi step custom (es. selezione centro ritiro) e verifica che sia eseguito correttamente (instance 20),B2C/B2B
+Order status dynamic pipeline #20,Stati ordine come dato → pipeline registry → ogni stato richiama handler specifico (instance 20),Workflow
+Payment status dynamic pipeline #20,Pagamento completato/fallito → pipeline dinamica → invio eventi/webhook (instance 20),Workflow
+Product variants with attributes #20,"Prodotto con varianti multiple, filtri per attributo via API /products?size=L&color=red (instance 20)",Catalog

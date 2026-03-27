@@ -1,0 +1,87 @@
+title: SEO
+fields:
+  -
+    handle: meta_title
+    field:
+      type: text
+      display: 'Meta Title'
+      instructions: 'Title for search engines (50-60 characters)'
+      character_limit: 60
+      width: 50
+  -
+    handle: meta_description
+    field:
+      type: textarea
+      display: 'Meta Description'
+      instructions: 'Description for search engines (150-160 characters)'
+      character_limit: 160
+      rows: 3
+      width: 50
+  -
+    handle: canonical_url
+    field:
+      type: text
+      display: 'Canonical URL'
+      instructions: 'Preferred URL for this content'
+      input_type: url
+  -
+    handle: og_title
+    field:
+      type: text
+      display: 'Open Graph Title'
+      instructions: 'Title for social media sharing'
+      character_limit: 60
+      width: 50
+  -
+    handle: og_description
+    field:
+      type: textarea
+      display: 'Open Graph Description'
+      character_limit: 160
+      rows: 2
+      width: 50
+  -
+    handle: og_image
+    field:
+      type: assets
+      display: 'Open Graph Image'
+      instructions: 'Image for social media sharing (1200x630px recommended)'
+      container: seo
+      max_files: 1
+      width: 50
+  -
+    handle: twitter_card
+    field:
+      type: select
+      display: 'Twitter Card Type'
+      options:
+        summary: Summary
+        summary_large_image: 'Summary Large Image'
+        app: App
+        player: Player
+      default: summary_large_image
+      width: 50
+  -
+    handle: robots_index
+    field:
+      type: toggle
+      display: 'Allow Indexing'
+      instructions: 'Allow search engines to index this page'
+      default: true
+      width: 50
+  -
+    handle: robots_follow
+    field:
+      type: toggle
+      display: 'Follow Links'
+      instructions: 'Allow search engines to follow links on this page'
+      default: true
+      width: 50
+  -
+    handle: structured_data
+    field:
+      type: code
+      display: 'Structured Data (JSON-LD)'
+      instructions: 'Custom structured data for rich snippets'
+      mode: javascript
+      theme: monokai

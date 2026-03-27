@@ -1,0 +1,26 @@
+includes:
+    - vendor/larastan/larastan/extension.neon
+
+parameters:
+
+    paths:
+        - src/
+
+    # Level 9 is the highest level
+    level: 1
+
+    inferPrivatePropertyTypeFromConstructor: true
+
+    treatPhpDocTypesAsCertain: false
+
+    # Performance optimizations
+    parallel:
+        maximumNumberOfProcesses: 2
+        processTimeout: 600.0
+
+    excludePaths:
+
+    ignoreErrors:
+        # - '#Unreachable statement - code above always terminates.#'
+        # - '#Call to an undefined method Illuminate\.*#'
+        # - '#Negated boolean expression is always false#'

@@ -1,0 +1,24 @@
+#!/bin/bash
+
+##############################################################
+# Clear Cache
+##############################################################
+echo "Clearing Cache..."
+vendor/bin/sail artisan cache:clear
+
+##############################################################
+# Run Laravel Pint
+# This script will run Laravel Pint on newly staged PHP Files.
+##############################################################
+echo "Running Laravel Pint..."
+
+files=$(git diff --cached --name-only --diff-filter=ACM -- '*.php')
+if [ ! -z "$files" ]; then
+    echo "Executing Laravel Pint"
+    vendor/bin/pint $files -q
+
+    ret=$?
+    if [ $ret -ne 0 ]; then return $ret; fi
+
+    git add $files
+fi

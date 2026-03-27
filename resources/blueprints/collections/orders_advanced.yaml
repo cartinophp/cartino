@@ -1,0 +1,624 @@
+title: Order Management
+handle: orders_advanced
+
+tabs:
+  
+  # Tab overview - Panoramica ordine
+  overview:
+    display: Overview
+    icon: clipboard-list
+    sections:
+      order_info:
+        display: Order Information
+        fields:
+          - 
+            handle: order_number
+            field:
+              type: text
+              display: Order Number
+              readonly: true
+              instructions: Automatically generated unique order number
+              width: 50
+              
+          -
+            handle: order_date
+            field:
+              type: datetime
+              display: Order Date
+              mode: single
+              readonly: true
+              width: 50
+              
+          -
+            handle: status
+            field:
+              type: select
+              display: Order Status
+              options:
+                pending: Pending Payment
+                processing: Processing
+                shipped: Shipped
+                delivered: Delivered
+                cancelled: Cancelled
+                refunded: Refunded
+              validate: required
+              width: 50
+              
+          -
+            handle: payment_status
+            field:
+              type: select
+              display: Payment Status
+              options:
+                pending: Pending
+                paid: Paid
+                partially_paid: Partially Paid
+                refunded: Refunded
+                cancelled: Cancelled
+              validate: required
+              width: 50
+      
+      totals_summary:
+        display: Order Summary
+        fields:
+          -
+            handle: subtotal
+            field:
+              type: money
+              display: Subtotal
+              currency: EUR
+              readonly: true
+              computed: true
+              width: 50
+              
+          -
+            handle: tax_amount
+            field:
+              type: money
+              display: Tax Amount
+              currency: EUR
+              readonly: true
+              computed: true
+              width: 50
+              
+          -
+            handle: shipping_amount
+            field:
+              type: money
+              display: Shipping
+              currency: EUR
+              width: 50
+              
+          -
+            handle: discount_amount
+            field:
+              type: money
+              display: Discount
+              currency: EUR
+              readonly: true
+              computed: true
+              width: 50
+              
+          -
+            handle: total_amount
+            field:
+              type: money
+              display: Total
+              currency: EUR
+              readonly: true
+              computed: true
+              width: 100
+  
+  # Tab customer - Informazioni cliente
+  customer:
+    display: Customer
+    icon: user
+    sections:
+      customer_info:
+        display: Customer Information
+        fields:
+          -
+            handle: customer
+            field:
+              type: relationship
+              display: Customer
+              resource: customers
+              max_items: 1
+              mode: select
+              validate: required
+              
+          -
+            handle: customer_email
+            field:
+              type: email
+              display: Customer Email
+              readonly: true
+              computed: true
+              width: 50
+              
+          -
+            handle: customer_phone
+            field:
+              type: text
+              display: Customer Phone
+              readonly: true
+              computed: true
+              width: 50
+              
+          -
+            handle: customer_notes
+            field:
+              type: textarea
+              display: Customer Notes
+              instructions: Notes provided by the customer during checkout
+              readonly: true
+              rows: 3
+      
+      addresses:
+        display: Addresses
+        fields:
+          -
+            handle: billing_address
+            field:
+              type: fieldgroup
+              display: Billing Address
+              fields:
+                -
+                  handle: company
+                  field:
+                    type: text
+                    display: Company
+                    width: 100
+                -
+                  handle: first_name
+                  field:
+                    type: text
+                    display: First Name
+                    validate: required
+                    width: 50
+                -
+                  handle: last_name
+                  field:
+                    type: text
+                    display: Last Name
+                    validate: required
+                    width: 50
+                -
+                  handle: address_line_1
+                  field:
+                    type: text
+                    display: Address Line 1
+                    validate: required
+                    width: 100
+                -
+                  handle: address_line_2
+                  field:
+                    type: text
+                    display: Address Line 2
+                    width: 100
+                -
+                  handle: city
+                  field:
+                    type: text
+                    display: City
+                    validate: required
+                    width: 50
+                -
+                  handle: postal_code
+                  field:
+                    type: text
+                    display: Postal Code
+                    validate: required
+                    width: 50
+                -
+                  handle: country
+                  field:
+                    type: select
+                    display: Country
+                    options: countries
+                    validate: required
+                    width: 50
+                    
+          -
+            handle: shipping_address
+            field:
+              type: fieldgroup
+              display: Shipping Address
+              fields:
+                -
+                  handle: same_as_billing
+                  field:
+                    type: toggle
+                    display: Same as Billing Address
+                    default: true
+                    width: 100
+                -
+                  handle: company
+                  field:
+                    type: text
+                    display: Company
+                    width: 100
+                    if:
+                      field: same_as_billing
+                      equals: false
+                -
+                  handle: first_name
+                  field:
+                    type: text
+                    display: First Name
+                    width: 50
+                    if:
+                      field: same_as_billing
+                      equals: false
+                -
+                  handle: last_name
+                  field:
+                    type: text
+                    display: Last Name
+                    width: 50
+                    if:
+                      field: same_as_billing
+                      equals: false
+                -
+                  handle: address_line_1
+                  field:
+                    type: text
+                    display: Address Line 1
+                    width: 100
+                    if:
+                      field: same_as_billing
+                      equals: false
+                -
+                  handle: address_line_2
+                  field:
+                    type: text
+                    display: Address Line 2
+                    width: 100
+                    if:
+                      field: same_as_billing
+                      equals: false
+                -
+                  handle: city
+                  field:
+                    type: text
+                    display: City
+                    width: 50
+                    if:
+                      field: same_as_billing
+                      equals: false
+                -
+                  handle: postal_code
+                  field:
+                    type: text
+                    display: Postal Code
+                    width: 50
+                    if:
+                      field: same_as_billing
+                      equals: false
+                -
+                  handle: country
+                  field:
+                    type: select
+                    display: Country
+                    options: countries
+                    width: 50
+                    if:
+                      field: same_as_billing
+                      equals: false
+  
+  # Tab items - Prodotti ordinati
+  items:
+    display: Items
+    icon: shopping-cart
+    fields:
+      -
+        handle: line_items
+        field:
+          type: replicator
+          display: Order Items
+          instructions: Products included in this order
+          collapsed: false
+          sets:
+            product:
+              display: Product Item
+              fields:
+                -
+                  handle: product
+                  field:
+                    type: relationship
+                    display: Product
+                    resource: products
+                    max_items: 1
+                    validate: required
+                    with: ['media', 'brand']
+                -
+                  handle: variant_title
+                  field:
+                    type: text
+                    display: Variant
+                    instructions: Product variant (size, color, etc.)
+                    placeholder: "e.g. Red / Large"
+                -
+                  handle: quantity
+                  field:
+                    type: integer
+                    display: Quantity
+                    min: 1
+                    validate: required|integer|min:1
+                    width: 25
+                -
+                  handle: unit_price
+                  field:
+                    type: money
+                    display: Unit Price
+                    currency: EUR
+                    validate: required|numeric|min:0
+                    width: 25
+                -
+                  handle: discount_amount
+                  field:
+                    type: money
+                    display: Item Discount
+                    currency: EUR
+                    default: 0
+                    width: 25
+                -
+                  handle: total_price
+                  field:
+                    type: money
+                    display: Total Price
+                    currency: EUR
+                    readonly: true
+                    computed: true
+                    width: 25
+                -
+                  handle: notes
+                  field:
+                    type: textarea
+                    display: Item Notes
+                    instructions: Special instructions for this item
+                    rows: 2
+  
+  # Tab fulfillment - Spedizione e tracking
+  fulfillment:
+    display: Fulfillment
+    icon: truck
+    sections:
+      shipping:
+        display: Shipping Information
+        fields:
+          -
+            handle: shipping_method
+            field:
+              type: select
+              display: Shipping Method
+              options:
+                standard: Standard Shipping (3-5 days)
+                express: Express Shipping (1-2 days)
+                overnight: Overnight Delivery
+                pickup: Store Pickup
+              width: 50
+              
+          -
+            handle: shipping_carrier
+            field:
+              type: select
+              display: Shipping Carrier
+              options:
+                dhl: DHL
+                ups: UPS
+                fedex: FedEx
+                poste_italiane: Poste Italiane
+                bartolini: Bartolini
+                gls: GLS
+              width: 50
+              
+          -
+            handle: tracking_number
+            field:
+              type: text
+              display: Tracking Number
+              instructions: Package tracking number
+              width: 50
+              
+          -
+            handle: tracking_url
+            field:
+              type: url
+              display: Tracking URL
+              instructions: Direct link to tracking page
+              width: 50
+      
+      timeline:
+        display: Fulfillment Timeline
+        fields:
+          -
+            handle: processed_at
+            field:
+              type: datetime
+              display: Processed At
+              mode: single
+              instructions: When the order was processed
+              width: 50
+              
+          -
+            handle: shipped_at
+            field:
+              type: datetime
+              display: Shipped At
+              mode: single
+              width: 50
+              
+          -
+            handle: delivered_at
+            field:
+              type: datetime
+              display: Delivered At
+              mode: single
+              width: 50
+              
+          -
+            handle: estimated_delivery
+            field:
+              type: datetime
+              display: Estimated Delivery
+              mode: single
+              instructions: Expected delivery date
+              width: 50
+  
+  # Tab payments - Pagamenti e fatturazione
+  payments:
+    display: Payments
+    icon: credit-card
+    sections:
+      payment_info:
+        display: Payment Information
+        fields:
+          -
+            handle: payment_method
+            field:
+              type: select
+              display: Payment Method
+              options:
+                credit_card: Credit Card
+                paypal: PayPal
+                stripe: Stripe
+                bank_transfer: Bank Transfer
+                cash_on_delivery: Cash on Delivery
+              width: 50
+              
+          -
+            handle: payment_reference
+            field:
+              type: text
+              display: Payment Reference
+              instructions: Transaction ID or reference number
+              width: 50
+              
+          -
+            handle: paid_at
+            field:
+              type: datetime
+              display: Paid At
+              mode: single
+              width: 50
+              
+          -
+            handle: payment_due_date
+            field:
+              type: datetime
+              display: Payment Due Date
+              mode: single
+              instructions: When payment is due (for invoices)
+              width: 50
+      
+      invoicing:
+        display: Invoicing
+        fields:
+          -
+            handle: invoice_number
+            field:
+              type: text
+              display: Invoice Number
+              instructions: Unique invoice identifier
+              width: 50
+              
+          -
+            handle: invoice_date
+            field:
+              type: date
+              display: Invoice Date
+              mode: single
+              width: 50
+              
+          -
+            handle: tax_invoice_required
+            field:
+              type: toggle
+              display: Tax Invoice Required
+              instructions: Customer requested a tax invoice
+              default: false
+              width: 50
+              
+          -
+            handle: invoice_notes
+            field:
+              type: textarea
+              display: Invoice Notes
+              instructions: Additional notes to include on invoice
+              rows: 3
+              width: 100
+  
+  # Tab notes - Note interne
+  notes:
+    display: Notes & History
+    icon: message-circle
+    fields:
+      -
+        handle: internal_notes
+        field:
+          type: textarea
+          display: Internal Notes
+          instructions: Private notes visible only to staff
+          rows: 5
+          
+      -
+        handle: customer_communication
+        field:
+          type: replicator
+          display: Customer Communication
+          instructions: Log of communications with the customer
+          sets:
+            email:
+              display: Email Communication
+              fields:
+                -
+                  handle: subject
+                  field:
+                    type: text
+                    display: Email Subject
+                    validate: required
+                -
+                  handle: message
+                  field:
+                    type: textarea
+                    display: Message
+                    validate: required
+                    rows: 4
+                -
+                  handle: sent_at
+                  field:
+                    type: datetime
+                    display: Sent At
+                    mode: single
+                    default: now
+                -
+                  handle: sent_by
+                  field:
+                    type: relationship
+                    display: Sent By
+                    resource: users
+                    max_items: 1
+            phone:
+              display: Phone Call
+              fields:
+                -
+                  handle: call_summary
+                  field:
+                    type: textarea
+                    display: Call Summary
+                    validate: required
+                    rows: 3
+                -
+                  handle: call_date
+                  field:
+                    type: datetime
+                    display: Call Date
+                    mode: single
+                    default: now
+                -
+                  handle: call_duration
+                  field:
+                    type: integer
+                    display: Duration (minutes)
+                    min: 1

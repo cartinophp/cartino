@@ -1,0 +1,96 @@
+title: SEO Meta
+handle: seo_fieldset
+
+fields:
+  -
+    handle: seo_title
+    field:
+      type: text
+      display: Meta Title
+      instructions: SEO title (max 60 chars for optimal display)
+      character_limit: 60
+      width: 100
+      
+  -
+    handle: seo_description
+    field:
+      type: textarea
+      display: Meta Description
+      instructions: SEO description (max 160 chars for optimal display)
+      character_limit: 160
+      rows: 3
+      width: 100
+      
+  -
+    handle: seo_keywords
+    field:
+      type: tags
+      display: Meta Keywords
+      instructions: Comma-separated keywords (optional, mostly ignored by search engines)
+      width: 100
+      
+  -
+    handle: og_title
+    field:
+      type: text
+      display: Open Graph Title
+      instructions: Title for social media sharing (defaults to meta title)
+      character_limit: 60
+      width: 50
+      
+  -
+    handle: og_description
+    field:
+      type: textarea
+      display: Open Graph Description
+      instructions: Description for social media sharing
+      character_limit: 160
+      rows: 2
+      width: 50
+      
+  -
+    handle: og_image
+    field:
+      type: assets
+      display: Open Graph Image
+      container: seo
+      max_files: 1
+      mode: grid
+      instructions: Image for social media sharing (1200x630px recommended)
+      width: 50
+      
+  -
+    handle: twitter_card
+    field:
+      type: select
+      display: Twitter Card Type
+      options:
+        summary: Summary
+        summary_large_image: Summary with Large Image
+      default: summary_large_image
+      width: 50
+      
+  -
+    handle: canonical_url
+    field:
+      type: url
+      display: Canonical URL
+      instructions: Canonical URL for this page (leave empty for auto-generation)
+      width: 100
+      
+  -
+    handle: robots
+    field:
+      type: checkboxes
+      display: Robots Meta
+      instructions: Search engine crawler directives
+      options:
+        index: Index
+        follow: Follow Links
+        noarchive: No Archive
+        nosnippet: No Snippet
+        noimageindex: No Image Index
+      default:
+        - index
+        - follow
+      width: 100

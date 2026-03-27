@@ -1,0 +1,36 @@
+@import "tailwindcss";
+
+/* Base styles */
+@layer base {
+  html, body {
+    font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  }
+  
+  /* Custom CSS variables for design system */
+  :root {
+    /* Colors */
+    --cartino-primary: #3b82f6;
+    --cartino-primary-hover: #2563eb;
+    --cartino-secondary: #64748b;
+    --cartino-success: #10b981;
+    --cartino-warning: #f59e0b;
+    --cartino-error: #ef4444;
+    
+    /* Spacing */
+    --cartino-space-xs: 0.25rem;
+    --cartino-space-sm: 0.5rem;
+    --cartino-space-md: 1rem;
+    --cartino-space-lg: 1.5rem;
+    --cartino-space-xl: 3rem;
+    
+    /* Borders */
+    --cartino-border-radius: 0.5rem;
+    --cartino-border-width: 1px;
+    --cartino-border-color: #e5e7eb;
+    
+    /* Shadows */
+    --cartino-shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+    --cartino-shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+    --cartino-shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1);
+  }
+}

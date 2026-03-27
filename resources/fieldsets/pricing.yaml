@@ -1,0 +1,38 @@
+title: Pricing
+fields:
+  -
+    handle: price
+    field:
+      type: money
+      display: Price
+      validate: required|numeric|min:0
+      width: 33
+  -
+    handle: compare_at_price
+    field:
+      type: money
+      display: 'Compare at Price'
+      instructions: 'Original price before discount'
+      validate: numeric|min:0
+      width: 33
+  -
+    handle: cost
+    field:
+      type: money
+      display: 'Cost per Item'
+      instructions: 'Cost from supplier'
+      validate: numeric|min:0
+      width: 33
+  -
+    handle: tax_code
+    field:
+      type: text
+      display: 'Tax Code'
+      instructions: 'Product tax classification code'
+  -
+    handle: taxable
+    field:
+      type: toggle
+      display: Taxable
+      instructions: 'Charge taxes on this product'
+      default: true

@@ -1,0 +1,10 @@
+#!/bin/sh
+
+# Disable commit if there is a "NOGIT" token in the committing code
+git diff --cached --name-only \
+    | grep -v spec/ \
+    | xargs grep --with-filename -n 'NOGIT' \
+    && echo 'COMMIT REJECTED Found "NOGIT" references. Please remove them before committing' \
+    && exit 1
+
+exit 0

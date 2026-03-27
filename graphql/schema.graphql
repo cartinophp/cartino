@@ -1,0 +1,471 @@
+"A datetime string with format `Y-m-d H:i:s`, e.g. `2018-05-23 13:43:32`."
+scalar DateTime @scalar(class: "Nuwave\\Lighthouse\\Schema\\Types\\Scalars\\DateTime")
+
+"Indicates what fields are available at the top level of a query operation."
+type Query {
+    # Products
+    product(id: ID @eq): Product @find
+    products(
+        search: String @search(within: ["name", "description", "sku"])
+        category: ID
+        brand: ID
+        minPrice: Float
+        maxPrice: Float
+        inStock: Boolean
+        orderBy: [QueryProductsOrderByOrderByClause!] @orderBy
+    ): [Product!]! @paginate(defaultCount: 20, maxCount: 100)
+
+    # Categories/Collections
+    collection(id: ID @eq, handle: String @eq): Category @find
+    collections(
+        parent: ID
+        orderBy: [QueryCollectionsOrderByOrderByClause!] @orderBy
+    ): [Category!]! @paginate(defaultCount: 20, maxCount: 100)
+
+    # Customers
+    customer(id: ID @eq, email: String @eq): Customer @find @guard(with: "api")
+    customers(
+        search: String @search(within: ["first_name", "last_name", "email"])
+        orderBy: [QueryCustomersOrderByOrderByClause!] @orderBy
+    ): [Customer!]! @paginate(defaultCount: 20, maxCount: 100) @guard(with: "api")
+
+    # Orders
+    order(id: ID @eq, number: String @eq): Order @find @guard(with: "api")
+    orders(
+        customer: ID
+        status: OrderStatus
+        orderBy: [QueryOrdersOrderByOrderByClause!] @orderBy
+    ): [Order!]! @paginate(defaultCount: 20, maxCount: 100) @guard(with: "api")
+
+    # Current User
+    me: Customer @auth(guard: "customers")
+    myOrders: [Order!]! @paginate(defaultCount: 10) @guard(with: "customers")
+
+    # Settings
+    settings: Settings! @field(resolver: "SettingsQuery@get")
+}
+
+"Account of a person who utilizes this application."
+type Customer {
+    id: ID!
+    first_name: String!
+    last_name: String!
+    full_name: String!
+    email: String!
+    phone: String
+    created_at: DateTime!
+    updated_at: DateTime!
+
+    # Relationships
+    addresses: [Address!]! @hasMany
+    orders: [Order!]! @hasMany
+    reviews: [Review!]! @hasMany
+
+    # Computed
+    total_spent: Float!
+    total_orders: Int!
+}
+
+type Product {
+    id: ID!
+    name: String!
+    handle: String!
+    description: String
+    sku: String
+    price: Float!
+    compare_price: Float
+    cost: Float
+    is_visible: Boolean!
+    is_featured: Boolean!
+    track_quantity: Boolean!
+    stock_quantity: Int
+    low_stock_threshold: Int
+    weight: Float
+    weight_unit: String
+    created_at: DateTime!
+    updated_at: DateTime!
+
+    # Relationships
+    category: Category @belongsTo
+    brand: Brand @belongsTo
+    variants: [ProductVariant!]! @hasMany
+    images: [Media!]! @morphMany(relation: "media")
+    reviews: [Review!]! @hasMany
+
+    # Computed
+    average_rating: Float!
+    review_count: Int!
+    in_stock: Boolean!
+    on_sale: Boolean!
+    discount_percentage: Int
+}
+
+type ProductVariant {
+    id: ID!
+    name: String!
+    sku: String
+    price: Float!
+    compare_price: Float
+    cost: Float
+    track_quantity: Boolean!
+    stock_quantity: Int
+    created_at: DateTime!
+    updated_at: DateTime!
+
+    # Relationships
+    product: Product! @belongsTo
+    images: [Media!]! @morphMany(relation: "media")
+}
+
+type Category {
+    id: ID!
+    name: String!
+    handle: String!
+    description: String
+    is_visible: Boolean!
+    sort_order: Int
+    created_at: DateTime!
+    updated_at: DateTime!
+
+    # Relationships
+    parent: Category @belongsTo
+    children: [Category!]! @hasMany
+    products: [Product!]! @belongsToMany
+    image: Media @morphOne(relation: "media")
+}
+
+type Brand {
+    id: ID!
+    name: String!
+    handle: String!
+    description: String
+    website: String
+    is_visible: Boolean!
+    created_at: DateTime!
+    updated_at: DateTime!
+
+    # Relationships
+    products: [Product!]! @hasMany
+    logo: Media @morphOne(relation: "media")
+}
+
+type Order {
+    id: ID!
+    number: String!
+    status: OrderStatus!
+    payment_status: PaymentStatus!
+    fulfillment_status: FulfillmentStatus!
+
+    # Amounts
+    subtotal: Float!
+    shipping: Float!
+    tax: Float!
+    discount: Float!
+    total: Float!
+
+    # Notes
+    notes: String
+    customer_notes: String
+
+    # Dates
+    placed_at: DateTime
+    completed_at: DateTime
+    cancelled_at: DateTime
+    created_at: DateTime!
+    updated_at: DateTime!
+
+    # Relationships
+    customer: Customer! @belongsTo
+    lines: [OrderLine!]! @hasMany
+    shipping_address: Address @belongsTo
+    billing_address: Address @belongsTo
+}
+
+type OrderLine {
+    id: ID!
+    product_name: String!
+    variant_name: String
+    sku: String
+    quantity: Int!
+    price: Float!
+    total: Float!
+    created_at: DateTime!
+
+    # Relationships
+    order: Order! @belongsTo
+    product: Product @belongsTo
+    variant: ProductVariant @belongsTo
+}
+
+type Address {
+    id: ID!
+    type: AddressType!
+    first_name: String!
+    last_name: String!
+    full_name: String!
+    company: String
+    address_line_1: String!
+    address_line_2: String
+    city: String!
+    state: String
+    postal_code: String!
+    country: String!
+    country_name: String!
+    phone: String
+    is_default: Boolean!
+    created_at: DateTime!
+    updated_at: DateTime!
+
+    # Relationships
+    customer: Customer! @belongsTo
+}
+
+type Review {
+    id: ID!
+    rating: Int!
+    title: String
+    content: String!
+    is_verified_purchase: Boolean!
+    is_approved: Boolean!
+    created_at: DateTime!
+    updated_at: DateTime!
+
+    # Relationships
+    product: Product! @belongsTo
+    customer: Customer! @belongsTo
+}
+
+type Media {
+    id: ID!
+    name: String!
+    file_name: String!
+    mime_type: String!
+    size: Int!
+    url: String!
+    created_at: DateTime!
+}
+
+type Settings {
+    store_name: String!
+    store_email: String!
+    store_phone: String
+    currency: String!
+    locale: String!
+    timezone: String!
+}
+
+enum OrderStatus {
+    PENDING @enum(value: "pending")
+    PROCESSING @enum(value: "processing")
+    SHIPPED @enum(value: "shipped")
+    DELIVERED @enum(value: "delivered")
+    CANCELLED @enum(value: "cancelled")
+    REFUNDED @enum(value: "refunded")
+}
+
+enum PaymentStatus {
+    PENDING @enum(value: "pending")
+    PAID @enum(value: "paid")
+    FAILED @enum(value: "failed")
+    REFUNDED @enum(value: "refunded")
+}
+
+enum FulfillmentStatus {
+    UNFULFILLED @enum(value: "unfulfilled")
+    PARTIAL @enum(value: "partial")
+    FULFILLED @enum(value: "fulfilled")
+}
+
+enum AddressType {
+    BILLING @enum(value: "billing")
+    SHIPPING @enum(value: "shipping")
+    BOTH @enum(value: "both")
+}
+
+"Allows ordering a list of records."
+input QueryProductsOrderByOrderByClause {
+    column: QueryProductsOrderByColumn!
+    order: SortOrder!
+}
+
+enum QueryProductsOrderByColumn {
+    NAME @enum(value: "name")
+    PRICE @enum(value: "price")
+    CREATED_AT @enum(value: "created_at")
+    UPDATED_AT @enum(value: "updated_at")
+}
+
+input QueryCollectionsOrderByOrderByClause {
+    column: QueryCollectionsOrderByColumn!
+    order: SortOrder!
+}
+
+enum QueryCollectionsOrderByColumn {
+    NAME @enum(value: "name")
+    SORT_ORDER @enum(value: "sort_order")
+    CREATED_AT @enum(value: "created_at")
+}
+
+input QueryCustomersOrderByOrderByClause {
+    column: QueryCustomersOrderByColumn!
+    order: SortOrder!
+}
+
+enum QueryCustomersOrderByColumn {
+    FIRST_NAME @enum(value: "first_name")
+    LAST_NAME @enum(value: "last_name")
+    EMAIL @enum(value: "email")
+    CREATED_AT @enum(value: "created_at")
+}
+
+input QueryOrdersOrderByOrderByClause {
+    column: QueryOrdersOrderByColumn!
+    order: SortOrder!
+}
+
+enum QueryOrdersOrderByColumn {
+    NUMBER @enum(value: "number")
+    TOTAL @enum(value: "total")
+    PLACED_AT @enum(value: "placed_at")
+    CREATED_AT @enum(value: "created_at")
+}
+
+enum SortOrder {
+    ASC @enum(value: "ASC")
+    DESC @enum(value: "DESC")
+}
+
+# ===== MUTATIONS =====
+
+type Mutation {
+    # Customer Authentication
+    login(email: String!, password: String!): AuthPayload! @field(resolver: "AuthMutations@login")
+    register(input: RegisterInput!): AuthPayload! @field(resolver: "AuthMutations@register")
+    logout: LogoutPayload! @guard(with: "customers") @field(resolver: "AuthMutations@logout")
+
+    # Customer Profile
+    updateProfile(input: UpdateProfileInput!): Customer! @guard(with: "customers") @field(resolver: "CustomerMutations@updateProfile")
+    changePassword(current_password: String!, password: String!, password_confirmation: String!): Customer! @guard(with: "customers") @field(resolver: "CustomerMutations@changePassword")
+
+    # Addresses
+    createAddress(input: CreateAddressInput!): Address! @guard(with: "customers") @field(resolver: "AddressMutations@create")
+    updateAddress(id: ID!, input: UpdateAddressInput!): Address! @guard(with: "customers") @field(resolver: "AddressMutations@update")
+    deleteAddress(id: ID!): DeletePayload! @guard(with: "customers") @field(resolver: "AddressMutations@delete")
+
+    # Cart
+    addToCart(product_id: ID!, variant_id: ID, quantity: Int!): Cart! @field(resolver: "CartMutations@add")
+    updateCartLine(line_id: ID!, quantity: Int!): Cart! @field(resolver: "CartMutations@updateLine")
+    removeFromCart(line_id: ID!): Cart! @field(resolver: "CartMutations@removeLine")
+    clearCart: Cart! @field(resolver: "CartMutations@clear")
+    applyCoupon(code: String!): Cart! @field(resolver: "CartMutations@applyCoupon")
+    removeCoupon: Cart! @field(resolver: "CartMutations@removeCoupon")
+
+    # Checkout
+    createOrder(input: CreateOrderInput!): Order! @guard(with: "customers") @field(resolver: "CheckoutMutations@createOrder")
+
+    # Reviews
+    createReview(input: CreateReviewInput!): Review! @guard(with: "customers") @field(resolver: "ReviewMutations@create")
+    updateReview(id: ID!, input: UpdateReviewInput!): Review! @guard(with: "customers") @field(resolver: "ReviewMutations@update")
+    deleteReview(id: ID!): DeletePayload! @guard(with: "customers") @field(resolver: "ReviewMutations@delete")
+}
+
+type AuthPayload {
+    access_token: String!
+    token_type: String!
+    expires_in: Int!
+    customer: Customer!
+}
+
+type LogoutPayload {
+    message: String!
+}
+
+type DeletePayload {
+    success: Boolean!
+    message: String!
+}
+
+type Cart {
+    lines: [CartLine!]!
+    subtotal: Float!
+    shipping: Float!
+    tax: Float!
+    discount: Float!
+    total: Float!
+    coupon_code: String
+}
+
+type CartLine {
+    id: ID!
+    product: Product!
+    variant: ProductVariant
+    quantity: Int!
+    price: Float!
+    total: Float!
+}
+
+input RegisterInput {
+    first_name: String! @rules(apply: ["required", "string", "max:255"])
+    last_name: String! @rules(apply: ["required", "string", "max:255"])
+    email: String! @rules(apply: ["required", "email", "unique:customers,email"])
+    password: String! @rules(apply: ["required", "string", "min:8", "confirmed"])
+    password_confirmation: String!
+}
+
+input UpdateProfileInput {
+    first_name: String @rules(apply: ["string", "max:255"])
+    last_name: String @rules(apply: ["string", "max:255"])
+    email: String @rules(apply: ["email", "unique:customers,email"])
+    phone: String @rules(apply: ["string", "max:50"])
+}
+
+input CreateAddressInput {
+    type: AddressType!
+    first_name: String! @rules(apply: ["required", "string", "max:255"])
+    last_name: String! @rules(apply: ["required", "string", "max:255"])
+    company: String @rules(apply: ["string", "max:255"])
+    address_line_1: String! @rules(apply: ["required", "string"])
+    address_line_2: String @rules(apply: ["string"])
+    city: String! @rules(apply: ["required", "string"])
+    state: String @rules(apply: ["string"])
+    postal_code: String! @rules(apply: ["required", "string"])
+    country: String! @rules(apply: ["required", "string", "size:2"])
+    phone: String @rules(apply: ["string"])
+    is_default: Boolean
+}
+
+input UpdateAddressInput {
+    type: AddressType
+    first_name: String @rules(apply: ["string", "max:255"])
+    last_name: String @rules(apply: ["string", "max:255"])
+    company: String @rules(apply: ["string", "max:255"])
+    address_line_1: String @rules(apply: ["string"])
+    address_line_2: String @rules(apply: ["string"])
+    city: String @rules(apply: ["string"])
+    state: String @rules(apply: ["string"])
+    postal_code: String @rules(apply: ["string"])
+    country: String @rules(apply: ["string", "size:2"])
+    phone: String @rules(apply: ["string"])
+    is_default: Boolean
+}
+
+input CreateOrderInput {
+    shipping_address_id: ID
+    billing_address_id: ID
+    shipping_method: String!
+    payment_method: String!
+    customer_notes: String
+}
+
+input CreateReviewInput {
+    product_id: ID! @rules(apply: ["required", "exists:products,id"])
+    rating: Int! @rules(apply: ["required", "integer", "min:1", "max:5"])
+    title: String @rules(apply: ["string", "max:255"])
+    content: String! @rules(apply: ["required", "string"])
+}
+
+input UpdateReviewInput {
+    rating: Int @rules(apply: ["integer", "min:1", "max:5"])
+    title: String @rules(apply: ["string", "max:255"])
+    content: String @rules(apply: ["string"])
+}

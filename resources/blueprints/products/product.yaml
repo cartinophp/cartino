@@ -1,0 +1,189 @@
+title: Product
+sections:
+  main:
+    display: Main
+    fields:
+      - 
+        handle: title
+        field:
+          type: text
+          display: Title
+          validate: required
+          width: 66
+      -
+        handle: slug
+        field:
+          type: slug
+          display: Slug
+          from: title
+          validate: required
+          width: 33
+      -
+        handle: handle
+        field:
+          type: text
+          display: Handle
+          instructions: 'Unique identifier for API access'
+          validate: alpha_dash
+      -
+        handle: product_type
+        field:
+          type: select
+          display: 'Product Type'
+          options:
+            physical: Physical
+            digital: Digital
+            service: Service
+            bundle: Bundle
+          default: physical
+          validate: required
+      -
+        handle: excerpt
+        field:
+          type: textarea
+          display: Excerpt
+          instructions: 'Short description for listings'
+          rows: 3
+      -
+        handle: description
+        field:
+          type: markdown
+          display: Description
+          instructions: 'Full product description'
+          buttons:
+            - bold
+            - italic
+            - unorderedlist
+            - orderedlist
+            - link
+            - image
+            - quote
+            - code
+  
+  media:
+    display: Media
+    fields:
+      -
+        handle: images
+        field:
+          type: assets
+          display: Images
+          container: products
+          max_files: 10
+          mode: grid
+      -
+        handle: hero_image
+        field:
+          type: assets
+          display: 'Hero Image'
+          container: products
+          max_files: 1
+          instructions: 'Main product image'
+  
+  organization:
+    display: Organization
+    fields:
+      -
+        handle: brand_id
+        field:
+          type: relationship
+          display: Brand
+          resource: brands
+          max_items: 1
+      -
+        handle: product_type_id
+        field:
+          type: relationship
+          display: 'Product Type'
+          resource: product_types
+          max_items: 1
+      -
+        handle: collections
+        field:
+          type: relationship
+          display: Collections
+          resource: collections
+          mode: select
+      -
+        handle: tags
+        field:
+          type: taggable
+          display: Tags
+  
+  pricing:
+    display: Pricing
+    instructions: 'Pricing is managed at the variant level'
+    fields:
+      -
+        handle: price_range
+        field:
+          type: text
+          display: 'Price Range'
+          instructions: 'Calculated automatically from variants'
+          read_only: true
+  
+  inventory:
+    display: Inventory
+    instructions: 'Inventory is managed at the variant level'
+    fields:
+      -
+        handle: total_inventory
+        field:
+          type: integer
+          display: 'Total Inventory'
+          instructions: 'Sum of all variant inventory'
+          read_only: true
+  
+  seo:
+    display: SEO
+    fields:
+      -
+        handle: meta_title
+        field:
+          type: text
+          display: 'Meta Title'
+          character_limit: 60
+      -
+        handle: meta_description
+        field:
+          type: textarea
+          display: 'Meta Description'
+          character_limit: 160
+          rows: 3
+      -
+        handle: seo
+        field:
+          type: seo
+          display: 'SEO Settings'
+          advanced: true
+  
+  publishing:
+    display: Publishing
+    fields:
+      -
+        handle: status
+        field:
+          type: select
+          display: Status
+          options:
+            draft: Draft
+            active: Active
+            archived: Archived
+          default: draft
+          validate: required
+      -
+        handle: published_at
+        field:
+          type: date
+          display: 'Published Date'
+          mode: single
+          time_enabled: true
+      -
+        handle: published_scope
+        field:
+          type: select
+          display: 'Published Scope'
+          options:
+            web: Web
+            global: Global
+          default: web

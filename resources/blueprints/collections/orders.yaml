@@ -1,0 +1,358 @@
+title: Order
+handle: orders
+
+sections:
+  
+  # Informazioni ordine
+  order_info:
+    display: Order Information
+    fields:
+      - 
+        handle: order_number
+        field:
+          type: text
+          display: Order Number
+          readonly: true
+          instructions: Automatically generated unique order number
+          
+      -
+        handle: status
+        field:
+          type: select
+          display: Order Status
+          options:
+            pending: Pending Payment
+            processing: Processing
+            shipped: Shipped
+            delivered: Delivered
+            cancelled: Cancelled
+            refunded: Refunded
+          validate: required
+          
+      -
+        handle: payment_status
+        field:
+          type: select
+          display: Payment Status
+          options:
+            pending: Pending
+            paid: Paid
+            partially_paid: Partially Paid
+            refunded: Refunded
+            cancelled: Cancelled
+          validate: required
+          
+      -
+        handle: order_date
+        field:
+          type: datetime
+          display: Order Date
+          mode: single
+          readonly: true
+          
+      -
+        handle: notes
+        field:
+          type: textarea
+          display: Order Notes
+          instructions: Internal notes about this order
+          rows: 3
+  
+  # Customer
+  customer_info:
+    display: Customer
+    fields:
+      -
+        handle: customer
+        field:
+          type: relationship
+          display: Customer
+          resource: customers
+          max_items: 1
+          mode: select
+          validate: required
+          
+      -
+        handle: customer_email
+        field:
+          type: email
+          display: Customer Email
+          readonly: true
+          computed: true
+          
+      -
+        handle: customer_phone
+        field:
+          type: text
+          display: Customer Phone
+          readonly: true
+          computed: true
+  
+  # Line items
+  items:
+    display: Order Items
+    fields:
+      -
+        handle: line_items
+        field:
+          type: replicator
+          display: Order Items
+          sets:
+            product:
+              display: Product
+              fields:
+                -
+                  handle: product
+                  field:
+                    type: relationship
+                    display: Product
+                    resource: products
+                    max_items: 1
+                    validate: required
+                -
+                  handle: variant
+                  field:
+                    type: text
+                    display: Variant
+                    instructions: Product variant (size, color, etc.)
+                -
+                  handle: quantity
+                  field:
+                    type: integer
+                    display: Quantity
+                    min: 1
+                    validate: required|integer|min:1
+                -
+                  handle: unit_price
+                  field:
+                    type: money
+                    display: Unit Price
+                    currency: EUR
+                    validate: required|numeric|min:0
+                -
+                  handle: total_price
+                  field:
+                    type: money
+                    display: Total Price
+                    currency: EUR
+                    readonly: true
+                    computed: true
+  
+  # Addresses
+  addresses:
+    display: Addresses
+    fields:
+      -
+        handle: billing_address
+        field:
+          type: fieldgroup
+          display: Billing Address
+          fields:
+            -
+              handle: company
+              field:
+                type: text
+                display: Company
+            -
+              handle: first_name
+              field:
+                type: text
+                display: First Name
+                validate: required
+            -
+              handle: last_name
+              field:
+                type: text
+                display: Last Name
+                validate: required
+            -
+              handle: address_line_1
+              field:
+                type: text
+                display: Address Line 1
+                validate: required
+            -
+              handle: address_line_2
+              field:
+                type: text
+                display: Address Line 2
+            -
+              handle: city
+              field:
+                type: text
+                display: City
+                validate: required
+            -
+              handle: postal_code
+              field:
+                type: text
+                display: Postal Code
+                validate: required
+            -
+              handle: country
+              field:
+                type: select
+                display: Country
+                options: countries
+                validate: required
+                
+      -
+        handle: shipping_address
+        field:
+          type: fieldgroup
+          display: Shipping Address
+          fields:
+            -
+              handle: same_as_billing
+              field:
+                type: toggle
+                display: Same as Billing Address
+                default: true
+            -
+              handle: company
+              field:
+                type: text
+                display: Company
+                if:
+                  field: same_as_billing
+                  equals: false
+            -
+              handle: first_name
+              field:
+                type: text
+                display: First Name
+                if:
+                  field: same_as_billing
+                  equals: false
+            -
+              handle: last_name
+              field:
+                type: text
+                display: Last Name
+                if:
+                  field: same_as_billing
+                  equals: false
+            -
+              handle: address_line_1
+              field:
+                type: text
+                display: Address Line 1
+                if:
+                  field: same_as_billing
+                  equals: false
+            -
+              handle: address_line_2
+              field:
+                type: text
+                display: Address Line 2
+                if:
+                  field: same_as_billing
+                  equals: false
+            -
+              handle: city
+              field:
+                type: text
+                display: City
+                if:
+                  field: same_as_billing
+                  equals: false
+            -
+              handle: postal_code
+              field:
+                type: text
+                display: Postal Code
+                if:
+                  field: same_as_billing
+                  equals: false
+            -
+              handle: country
+              field:
+                type: select
+                display: Country
+                options: countries
+                if:
+                  field: same_as_billing
+                  equals: false
+  
+  # Totals
+  totals:
+    display: Order Totals
+    fields:
+      -
+        handle: subtotal
+        field:
+          type: money
+          display: Subtotal
+          currency: EUR
+          readonly: true
+          computed: true
+          
+      -
+        handle: tax_amount
+        field:
+          type: money
+          display: Tax Amount
+          currency: EUR
+          readonly: true
+          computed: true
+          
+      -
+        handle: shipping_amount
+        field:
+          type: money
+          display: Shipping
+          currency: EUR
+          
+      -
+        handle: discount_amount
+        field:
+          type: money
+          display: Discount
+          currency: EUR
+          readonly: true
+          computed: true
+          
+      -
+        handle: total_amount
+        field:
+          type: money
+          display: Total
+          currency: EUR
+          readonly: true
+          computed: true
+  
+  # Shipping
+  shipping:
+    display: Shipping & Fulfillment
+    fields:
+      -
+        handle: shipping_method
+        field:
+          type: select
+          display: Shipping Method
+          options:
+            standard: Standard Shipping
+            express: Express Shipping
+            overnight: Overnight
+            pickup: Store Pickup
+            
+      -
+        handle: tracking_number
+        field:
+          type: text
+          display: Tracking Number
+          instructions: Package tracking number
+          
+      -
+        handle: shipped_at
+        field:
+          type: datetime
+          display: Shipped At
+          mode: single
+          
+      -
+        handle: delivered_at
+        field:
+          type: datetime
+          display: Delivered At
+          mode: single

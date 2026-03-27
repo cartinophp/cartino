@@ -1,0 +1,207 @@
+version: '3.8'
+
+services:
+  # Cartino Application
+  app:
+    build:
+      context: .
+      target: production
+    container_name: shopper_app
+    restart: unless-stopped
+    working_dir: /var/www
+    volumes:
+      - .:/var/www
+      - ./storage:/var/www/storage
+    networks:
+      - cartino
+    environment:
+      - APP_ENV=production
+      - APP_DEBUG=false
+      - DB_CONNECTION=mysql
+      - DB_HOST=mysql
+      - DB_DATABASE=cartino
+      - DB_USERNAME=cartino
+      - DB_PASSWORD=shopper_password
+      - REDIS_HOST=redis
+      - CACHE_DRIVER=redis
+      - SESSION_DRIVER=redis
+      - QUEUE_CONNECTION=redis
+    depends_on:
+      - mysql
+      - redis
+
+  # Nginx Web Server
+  nginx:
+    image: nginx:alpine
+    container_name: shopper_nginx
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - .:/var/www
+      - ./docker/nginx:/etc/nginx/conf.d
+      - ./docker/ssl:/etc/nginx/ssl
+    networks:
+      - cartino
+    depends_on:
+      - app
+
+  # MySQL Database
+  mysql:
+    image: mysql:8.0
+    container_name: shopper_mysql
+    restart: unless-stopped
+    environment:
+      - MYSQL_DATABASE=cartino
+      - MYSQL_USER=cartino
+      - MYSQL_PASSWORD=shopper_password
+      - MYSQL_ROOT_PASSWORD=root_password
+    volumes:
+      - mysql_data:/var/lib/mysql
+      - ./docker/mysql:/docker-entrypoint-initdb.d
+    networks:
+      - cartino
+    ports:
+      - "3306:3306"
+
+  # Redis Cache & Sessions
+  redis:
+    image: redis:7-alpine
+    container_name: shopper_redis
+    restart: unless-stopped
+    volumes:
+      - redis_data:/data
+      - ./docker/redis.conf:/etc/redis/redis.conf
+    networks:
+      - cartino
+    ports:
+      - "6379:6379"
+    command: redis-server /etc/redis/redis.conf
+
+  # Queue Worker
+  queue:
+    build:
+      context: .
+      target: production
+    container_name: shopper_queue
+    restart: unless-stopped
+    working_dir: /var/www
+    volumes:
+      - .:/var/www
+    networks:
+      - cartino
+    environment:
+      - APP_ENV=production
+      - DB_CONNECTION=mysql
+      - DB_HOST=mysql
+      - DB_DATABASE=cartino
+      - DB_USERNAME=cartino
+      - DB_PASSWORD=shopper_password
+      - REDIS_HOST=redis
+      - QUEUE_CONNECTION=redis
+    depends_on:
+      - mysql
+      - redis
+    command: php artisan queue:work --sleep=3 --tries=3 --max-time=3600
+
+  # Scheduler (Cron Jobs)
+  scheduler:
+    build:
+      context: .
+      target: production
+    container_name: shopper_scheduler
+    restart: unless-stopped
+    working_dir: /var/www
+    volumes:
+      - .:/var/www
+    networks:
+      - cartino
+    environment:
+      - APP_ENV=production
+      - DB_CONNECTION=mysql
+      - DB_HOST=mysql
+      - DB_DATABASE=cartino
+      - DB_USERNAME=cartino
+      - DB_PASSWORD=shopper_password
+      - REDIS_HOST=redis
+    depends_on:
+      - mysql
+      - redis
+    command: >
+      sh -c "
+        while true; do
+          php artisan schedule:run --verbose --no-interaction &
+          sleep 60
+        done
+      "
+
+  # Elasticsearch (Optional - for advanced search)
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:8.8.0
+    container_name: shopper_elasticsearch
+    restart: unless-stopped
+    environment:
+      - discovery.type=single-node
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+      - xpack.security.enabled=false
+    volumes:
+      - elasticsearch_data:/usr/share/elasticsearch/data
+    networks:
+      - cartino
+    ports:
+      - "9200:9200"
+      - "9300:9300"
+
+  # Mailhog (Development Email Testing)
+  mailhog:
+    image: mailhog/mailhog
+    container_name: shopper_mailhog
+    restart: unless-stopped
+    ports:
+      - "8025:8025"
+      - "1025:1025"
+    networks:
+      - cartino
+
+  # PhpMyAdmin (Database Management)
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    container_name: shopper_phpmyadmin
+    restart: unless-stopped
+    environment:
+      - PMA_HOST=mysql
+      - PMA_USER=cartino
+      - PMA_PASSWORD=shopper_password
+    ports:
+      - "8080:80"
+    networks:
+      - cartino
+    depends_on:
+      - mysql
+
+  # Redis Commander (Redis Management)
+  redis-commander:
+    image: rediscommander/redis-commander:latest
+    container_name: shopper_redis_commander
+    restart: unless-stopped
+    environment:
+      - REDIS_HOSTS=local:redis:6379
+    ports:
+      - "8081:8081"
+    networks:
+      - cartino
+    depends_on:
+      - redis
+
+networks:
+  cartino:
+    driver: bridge
+
+volumes:
+  mysql_data:
+    driver: local
+  redis_data:
+    driver: local
+  elasticsearch_data:
+    driver: local

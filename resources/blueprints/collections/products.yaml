@@ -1,0 +1,226 @@
+title: Product
+handle: products
+
+sections:
+  
+  # Sezione principale - Informazioni prodotto
+  main:
+    display: Product Information
+    fields:
+      - 
+        handle: name
+        field:
+          type: text
+          display: Product Name
+          instructions: The name of your product
+          validate: required|max:255
+          width: 100
+          
+      -
+        handle: slug
+        field:
+          type: slug
+          display: URL Slug
+          from: name
+          validate: required|unique:products,slug
+          instructions: Automatically generated from product name
+          
+      -
+        handle: description
+        field:
+          type: textarea
+          display: Description
+          instructions: Full product description
+          validate: required
+          rows: 8
+          
+      -
+        handle: short_description
+        field:
+          type: textarea
+          display: Short Description
+          instructions: Brief product summary for listings
+          character_limit: 160
+          rows: 3
+  
+  # Sezione pricing e inventory
+  pricing:
+    display: Pricing & Inventory
+    fields:
+      -
+        handle: price
+        field:
+          type: money
+          display: Price
+          validate: required|numeric|min:0
+          currency: EUR
+          
+      -
+        handle: compare_price
+        field:
+          type: money
+          display: Compare at Price
+          instructions: Original price before discount
+          currency: EUR
+          
+      -
+        handle: cost_price
+        field:
+          type: money
+          display: Cost Price
+          instructions: Your cost for this product
+          currency: EUR
+          
+      -
+        handle: sku
+        field:
+          type: text
+          display: SKU
+          instructions: Stock Keeping Unit
+          validate: nullable|unique:products,sku
+          
+      -
+        handle: track_inventory
+        field:
+          type: toggle
+          display: Track Inventory
+          default: true
+          instructions: Enable inventory tracking for this product
+          
+      -
+        handle: quantity
+        field:
+          type: integer
+          display: Quantity in Stock
+          validate: nullable|integer|min:0
+          default: 0
+          if:
+            field: track_inventory
+            equals: true
+  
+  # Sezione media
+  media:
+    display: Media
+    fields:
+      -
+        handle: featured_image
+        field:
+          type: assets
+          display: Featured Image
+          container: products
+          max_files: 1
+          mode: grid
+          validate: required
+          
+      -
+        handle: gallery
+        field:
+          type: assets
+          display: Product Gallery
+          container: products
+          max_files: 10
+          mode: grid
+          instructions: Additional product images
+  
+  # Sezione sidebar - Status e metadata
+  sidebar:
+    display: Settings
+    fields:
+      -
+        handle: status
+        field:
+          type: select
+          display: Status
+          default: draft
+          options:
+            draft: Draft
+            active: Active
+            archived: Archived
+          validate: required
+          
+      -
+        handle: published_at
+        field:
+          type: datetime
+          display: Published Date
+          mode: single
+          instructions: When this product becomes available
+          
+      -
+        handle: categories
+        field:
+          type: terms
+          display: Categories
+          taxonomies:
+            - product_categories
+          mode: select
+          validate: required
+          
+      -
+        handle: tags
+        field:
+          type: tags
+          display: Tags
+          instructions: Product tags for filtering and search
+          
+      -
+        handle: brand
+        field:
+          type: relationship
+          display: Brand
+          resource: brands
+          max_items: 1
+          mode: select
+  
+  # Sezione shipping
+  shipping:
+    display: Shipping
+    fields:
+      -
+        handle: weight
+        field:
+          type: number
+          display: Weight (kg)
+          step: 0.01
+          min: 0
+          
+      -
+        handle: dimensions
+        field:
+          type: fieldgroup
+          display: Dimensions (cm)
+          fields:
+            -
+              handle: length
+              field:
+                type: number
+                display: Length
+                step: 0.1
+                min: 0
+            -
+              handle: width
+              field:
+                type: number
+                display: Width
+                step: 0.1
+                min: 0
+            -
+              handle: height
+              field:
+                type: number
+                display: Height
+                step: 0.1
+                min: 0
+                
+      -
+        handle: requires_shipping
+        field:
+          type: toggle
+          display: Requires Shipping
+          default: true
+          instructions: Uncheck for digital products
+  
+  # Sezione SEO - Import da fieldset
+  seo:
+    display: SEO
+    import: seo_fieldset

@@ -1,0 +1,64 @@
+{
+  "name": "products",
+  "title": "Product Custom Fields",
+  "description": "Custom fields configuration for products",
+  "fields": [
+    {
+      "name": "technical_specs",
+      "label": "Technical Specifications",
+      "type": "json",
+      "group": "Technical",
+      "help": "Add technical specifications as key-value pairs"
+    },
+    {
+      "name": "warranty_period",
+      "label": "Warranty Period (months)",
+      "type": "number",
+      "group": "Technical",
+      "validation": {
+        "min": 0,
+        "max": 120
+      }
+    },
+    {
+      "name": "care_instructions",
+      "label": "Care Instructions",
+      "type": "rich_text",
+      "group": "Product Info"
+    },
+    {
+      "name": "material_composition",
+      "label": "Material Composition",
+      "type": "multi_select",
+      "group": "Materials",
+      "validation": {
+        "options": ["Cotton", "Polyester", "Wool", "Silk", "Linen", "Leather", "Metal", "Plastic", "Wood", "Glass"]
+      }
+    },
+    {
+      "name": "country_of_origin",
+      "label": "Country of Origin",
+      "type": "select",
+      "group": "Origin",
+      "validation": {
+        "options": ["Italy", "France", "Germany", "China", "USA", "Japan", "Other"]
+      }
+    },
+    {
+      "name": "eco_friendly",
+      "label": "Eco-Friendly Product",
+      "type": "boolean",
+      "group": "Sustainability",
+      "default": false
+    },
+    {
+      "name": "certifications",
+      "label": "Certifications",
+      "type": "multi_select",
+      "group": "Sustainability",
+      "validation": {
+        "options": ["Organic", "Fair Trade", "GOTS", "OEKO-TEX", "Cradle to Cradle", "Energy Star"]
+      }
+    }
+  ]
+}

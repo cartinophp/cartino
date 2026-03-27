@@ -1,0 +1,77 @@
+title: Inventory
+fields:
+  -
+    handle: sku
+    field:
+      type: text
+      display: SKU
+      instructions: 'Stock Keeping Unit'
+      validate: required
+      width: 50
+  -
+    handle: barcode
+    field:
+      type: text
+      display: Barcode
+      instructions: 'ISBN, UPC, GTIN, etc.'
+      width: 50
+  -
+    handle: track_quantity
+    field:
+      type: toggle
+      display: 'Track Quantity'
+      instructions: 'Enable inventory tracking for this item'
+      default: true
+  -
+    handle: inventory_quantity
+    field:
+      type: integer
+      display: Quantity
+      instructions: 'Current stock quantity'
+      validate: required|integer|min:0
+      default: 0
+      width: 33
+      if:
+        track_quantity: equals true
+  -
+    handle: inventory_policy
+    field:
+      type: select
+      display: 'When out of stock'
+      options:
+        deny: "Don't allow purchases"
+        continue: 'Allow purchases'
+      default: deny
+      width: 33
+      if:
+        track_quantity: equals true
+  -
+    handle: allow_backorder
+    field:
+      type: toggle
+      display: 'Allow Backorder'
+      instructions: 'Allow customers to order when out of stock'
+      default: false
+      width: 33
+      if:
+        track_quantity: equals true
+  -
+    handle: low_stock_threshold
+    field:
+      type: integer
+      display: 'Low Stock Alert'
+      instructions: 'Alert when inventory falls below this number'
+      validate: integer|min:0
+      width: 50
+  -
+    handle: fulfillment_service
+    field:
+      type: select
+      display: 'Fulfillment Service'
+      options:
+        manual: Manual
+        amazon: Amazon
+        shipstation: ShipStation
+        third_party: 'Third Party'
+      default: manual
+      width: 50

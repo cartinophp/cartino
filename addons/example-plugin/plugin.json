@@ -1,0 +1,14 @@
+{
+    "id": "example-plugin",
+    "name": "Example Plugin",
+    "description": "An example plugin demonstrating the plugin system",
+    "version": "1.0.0",
+    "author": "Your Name",
+    "class": "ExamplePlugin\\ExamplePlugin",
+    "dependencies": {},
+    "autoload": {
+        "psr-4": {
+            "ExamplePlugin\\": "src/"
+        }
+    }
+}

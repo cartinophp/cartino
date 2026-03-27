@@ -1,0 +1,97 @@
+{
+  "title": "Categories",
+  "handle": "categories",
+  "type": "collection",
+  "description": "Product categories for organization",
+  "sort_field": "title",
+  "sort_direction": "asc",
+  "structure": {
+    "root": true,
+    "tree": true,
+    "max_depth": 3
+  },
+  "orderable": true,
+  "searchable": true,
+  "revisions": false,
+  "sites": ["default"],
+  "template": "categories/show",
+  "layout": "layout",
+  "blueprints": ["category"],
+  "fields": {
+    "title": {
+      "type": "text",
+      "display": "Category Name",
+      "instructions": "The name of the category",
+      "required": true,
+      "validate": ["required", "string", "max:255"],
+      "maxlength": 255,
+      "placeholder": "Category name"
+    },
+    "handle": {
+      "type": "text",
+      "display": "URL Handle",
+      "instructions": "The URL-friendly version of the category name",
+      "required": true,
+      "validate": ["required", "string", "max:255", "regex:/^[a-z0-9\\-_]+$/"],
+      "maxlength": 255,
+      "placeholder": "category-handle"
+    },
+    "description": {
+      "type": "textarea",
+      "display": "Description",
+      "instructions": "Category description for SEO and display",
+      "rows": 4,
+      "character_limit": 500
+    },
+    "image": {
+      "type": "assets",
+      "display": "Category Image",
+      "instructions": "Featured image for the category",
+      "container": "categories",
+      "max_files": 1,
+      "allowed_extensions": ["jpg", "jpeg", "png", "webp"]
+    },
+    "status": {
+      "type": "select",
+      "display": "Status",
+      "instructions": "Publication status",
+      "required": true,
+      "default": "active",
+      "options": {
+        "active": "Active",
+        "inactive": "Inactive"
+      }
+    },
+    "sort_order": {
+      "type": "number",
+      "display": "Sort Order",
+      "instructions": "Order in which categories appear",
+      "min": 0,
+      "default": 0
+    },
+    "parent_id": {
+      "type": "entries",
+      "display": "Parent Category",
+      "instructions": "Parent category (for hierarchical structure)",
+      "collection": "categories",
+      "max_items": 1
+    },
+    "seo": {
+      "type": "group",
+      "display": "SEO Settings",
+      "fields": {
+        "title": {
+          "type": "text",
+          "display": "SEO Title",
+          "maxlength": 60
+        },
+        "description": {
+          "type": "textarea",
+          "display": "Meta Description",
+          "rows": 2,
+          "maxlength": 160
+        }
+      }
+    }
+  }
+}

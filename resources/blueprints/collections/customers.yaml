@@ -1,0 +1,197 @@
+title: Customer
+handle: customers
+
+sections:
+  
+  # Informazioni personali
+  personal:
+    display: Personal Information
+    fields:
+      - 
+        handle: first_name
+        field:
+          type: text
+          display: First Name
+          validate: required|max:255
+          width: 50
+          
+      -
+        handle: last_name
+        field:
+          type: text
+          display: Last Name
+          validate: required|max:255
+          width: 50
+          
+      -
+        handle: email
+        field:
+          type: email
+          display: Email Address
+          validate: required|email|unique:customers,email
+          width: 100
+          
+      -
+        handle: phone
+        field:
+          type: text
+          display: Phone Number
+          validate: nullable|max:20
+          width: 50
+          
+      -
+        handle: date_of_birth
+        field:
+          type: date
+          display: Date of Birth
+          mode: single
+          width: 50
+  
+  # Indirizzi
+  addresses:
+    display: Addresses
+    fields:
+      -
+        handle: addresses
+        field:
+          type: replicator
+          display: Customer Addresses
+          sets:
+            address:
+              display: Address
+              fields:
+                -
+                  handle: type
+                  field:
+                    type: select
+                    display: Address Type
+                    options:
+                      billing: Billing
+                      shipping: Shipping
+                    default: shipping
+                -
+                  handle: company
+                  field:
+                    type: text
+                    display: Company
+                -
+                  handle: address_line_1
+                  field:
+                    type: text
+                    display: Address Line 1
+                    validate: required
+                -
+                  handle: address_line_2
+                  field:
+                    type: text
+                    display: Address Line 2
+                -
+                  handle: city
+                  field:
+                    type: text
+                    display: City
+                    validate: required
+                -
+                  handle: state
+                  field:
+                    type: text
+                    display: State/Province
+                -
+                  handle: postal_code
+                  field:
+                    type: text
+                    display: Postal Code
+                    validate: required
+                -
+                  handle: country
+                  field:
+                    type: select
+                    display: Country
+                    options: countries
+                    validate: required
+                -
+                  handle: is_default
+                  field:
+                    type: toggle
+                    display: Default Address
+                    default: false
+  
+  # Account settings
+  account:
+    display: Account Settings
+    fields:
+      -
+        handle: status
+        field:
+          type: select
+          display: Account Status
+          default: active
+          options:
+            active: Active
+            inactive: Inactive
+            suspended: Suspended
+          validate: required
+          
+      -
+        handle: email_verified_at
+        field:
+          type: datetime
+          display: Email Verified At
+          mode: single
+          readonly: true
+          
+      -
+        handle: accepts_marketing
+        field:
+          type: toggle
+          display: Accepts Marketing
+          default: false
+          instructions: Customer has opted in to marketing emails
+          
+      -
+        handle: customer_group
+        field:
+          type: relationship
+          display: Customer Group
+          resource: customer_groups
+          max_items: 1
+          mode: select
+  
+  # Statistiche (read-only)
+  stats:
+    display: Statistics
+    fields:
+      -
+        handle: total_orders
+        field:
+          type: integer
+          display: Total Orders
+          readonly: true
+          computed: true
+          
+      -
+        handle: total_spent
+        field:
+          type: money
+          display: Total Spent
+          currency: EUR
+          readonly: true
+          computed: true
+          
+      -
+        handle: average_order_value
+        field:
+          type: money
+          display: Average Order Value
+          currency: EUR
+          readonly: true
+          computed: true
+          
+      -
+        handle: last_order_date
+        field:
+          type: datetime
+          display: Last Order Date
+          mode: single
+          readonly: true
+          computed: true

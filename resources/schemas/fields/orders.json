@@ -1,0 +1,70 @@
+{
+  "name": "orders",
+  "title": "Order Custom Fields",
+  "description": "Custom fields configuration for orders",
+  "fields": [
+    {
+      "name": "gift_message",
+      "label": "Gift Message",
+      "type": "textarea",
+      "group": "Gift Options"
+    },
+    {
+      "name": "is_gift",
+      "label": "Is Gift Order",
+      "type": "boolean",
+      "group": "Gift Options",
+      "default": false
+    },
+    {
+      "name": "gift_wrap",
+      "label": "Gift Wrap",
+      "type": "select",
+      "group": "Gift Options",
+      "validation": {
+        "options": ["None", "Standard", "Premium", "Luxury"]
+      },
+      "conditional": {
+        "field": "is_gift",
+        "operator": "=",
+        "value": true
+      }
+    },
+    {
+      "name": "delivery_instructions",
+      "label": "Delivery Instructions",
+      "type": "textarea",
+      "group": "Delivery"
+    },
+    {
+      "name": "preferred_delivery_time",
+      "label": "Preferred Delivery Time",
+      "type": "select",
+      "group": "Delivery",
+      "validation": {
+        "options": ["Morning (9-12)", "Afternoon (12-17)", "Evening (17-20)", "Any time"]
+      }
+    },
+    {
+      "name": "source_channel",
+      "label": "Source Channel",
+      "type": "select",
+      "group": "Attribution",
+      "validation": {
+        "options": ["Website", "Mobile App", "Phone", "In-Store", "Marketplace", "Social Media"]
+      }
+    },
+    {
+      "name": "campaign_code",
+      "label": "Campaign Code",
+      "type": "text",
+      "group": "Attribution"
+    },
+    {
+      "name": "referrer",
+      "label": "Referrer",
+      "type": "text",
+      "group": "Attribution"
+    }
+  ]
+}

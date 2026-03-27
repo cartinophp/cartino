@@ -1,0 +1,402 @@
+title: Product Advanced
+handle: products_advanced
+
+tabs:
+  
+  # Tab principale - Contenuto
+  content:
+    display: Content
+    icon: edit
+    instructions: Main product information and content
+    sections:
+      basic_info:
+        display: Basic Information
+        fields:
+          - 
+            handle: name
+            field:
+              type: text
+              display: Product Name
+              instructions: The name of your product
+              validate: required|max:255
+              width: 100
+              
+          -
+            handle: slug
+            field:
+              type: slug
+              display: URL Slug
+              from: name
+              validate: required|unique:products,slug
+              instructions: Automatically generated from product name
+              
+          -
+            handle: description
+            field:
+              type: bard
+              display: Description
+              instructions: Full product description with rich formatting
+              validate: required
+              buttons:
+                - h2
+                - h3
+                - bold
+                - italic
+                - unorderedlist
+                - orderedlist
+                - quote
+                - link
+                - image
+              toolbar_mode: floating
+              
+          -
+            handle: short_description
+            field:
+              type: textarea
+              display: Short Description
+              instructions: Brief product summary for listings (max 160 chars)
+              character_limit: 160
+              rows: 3
+      
+      categorization:
+        display: Categories & Tags
+        fields:
+          -
+            handle: categories
+            field:
+              type: terms
+              display: Categories
+              taxonomies:
+                - product_categories
+              mode: select
+              validate: required
+              create: true
+              
+          -
+            handle: tags
+            field:
+              type: tags
+              display: Tags
+              instructions: Product tags for filtering and search
+              
+          -
+            handle: brand
+            field:
+              type: relationship
+              display: Brand
+              resource: brands
+              max_items: 1
+              mode: select
+  
+  # Tab pricing - Prezzi e inventory
+  pricing:
+    display: Pricing & Inventory
+    icon: dollar-sign
+    sections:
+      pricing:
+        display: Pricing
+        fields:
+          -
+            handle: price
+            field:
+              type: money
+              display: Price
+              validate: required|numeric|min:0
+              currency: EUR
+              width: 50
+              
+          -
+            handle: compare_price
+            field:
+              type: money
+              display: Compare at Price
+              instructions: Original price before discount
+              currency: EUR
+              width: 50
+              
+          -
+            handle: cost_price
+            field:
+              type: money
+              display: Cost Price
+              instructions: Your cost for this product
+              currency: EUR
+              width: 50
+              
+          -
+            handle: tax_rate
+            field:
+              type: number
+              display: Tax Rate (%)
+              min: 0
+              max: 100
+              step: 0.01
+              default: 22
+              width: 50
+      
+      inventory:
+        display: Inventory Management
+        fields:
+          -
+            handle: sku
+            field:
+              type: text
+              display: SKU
+              instructions: Stock Keeping Unit
+              validate: nullable|unique:products,sku
+              width: 50
+              
+          -
+            handle: barcode
+            field:
+              type: text
+              display: Barcode
+              instructions: Product barcode (EAN, UPC, etc.)
+              width: 50
+              
+          -
+            handle: track_inventory
+            field:
+              type: toggle
+              display: Track Inventory
+              default: true
+              instructions: Enable inventory tracking for this product
+              width: 50
+              
+          -
+            handle: quantity
+            field:
+              type: integer
+              display: Quantity in Stock
+              validate: nullable|integer|min:0
+              default: 0
+              width: 50
+              if:
+                field: track_inventory
+                equals: true
+                
+          -
+            handle: low_stock_threshold
+            field:
+              type: integer
+              display: Low Stock Alert
+              instructions: Alert when stock falls below this number
+              min: 0
+              default: 5
+              width: 50
+              if:
+                field: track_inventory
+                equals: true
+  
+  # Tab media
+  media:
+    display: Media
+    icon: image
+    sections:
+      images:
+        display: Product Images
+        instructions: Upload high-quality images of your product
+        fields:
+          -
+            handle: featured_image
+            field:
+              type: assets
+              display: Featured Image
+              container: products
+              max_files: 1
+              mode: grid
+              validate: required
+              instructions: Main product image shown in listings
+              
+          -
+            handle: gallery
+            field:
+              type: assets
+              display: Product Gallery
+              container: products
+              max_files: 10
+              mode: grid
+              instructions: Additional product images for detail view
+      
+      videos:
+        display: Product Videos
+        fields:
+          -
+            handle: video_url
+            field:
+              type: url
+              display: Product Video URL
+              instructions: YouTube or Vimeo URL showcasing the product
+              
+          -
+            handle: video_thumbnail
+            field:
+              type: assets
+              display: Video Thumbnail
+              container: products
+              max_files: 1
+              mode: grid
+              instructions: Custom thumbnail for the video (optional)
+  
+  # Tab shipping & attributes
+  details:
+    display: Details
+    icon: truck
+    sections:
+      shipping:
+        display: Shipping Information
+        fields:
+          -
+            handle: requires_shipping
+            field:
+              type: toggle
+              display: Requires Shipping
+              default: true
+              instructions: Uncheck for digital products
+              
+          -
+            handle: weight
+            field:
+              type: number
+              display: Weight (kg)
+              step: 0.01
+              min: 0
+              width: 50
+              if:
+                field: requires_shipping
+                equals: true
+                
+          -
+            handle: dimensions
+            field:
+              type: fieldgroup
+              display: Dimensions (cm)
+              width: 50
+              if:
+                field: requires_shipping
+                equals: true
+              fields:
+                -
+                  handle: length
+                  field:
+                    type: number
+                    display: Length
+                    step: 0.1
+                    min: 0
+                    width: 33
+                -
+                  handle: width
+                  field:
+                    type: number
+                    display: Width
+                    step: 0.1
+                    min: 0
+                    width: 33
+                -
+                  handle: height
+                  field:
+                    type: number
+                    display: Height
+                    step: 0.1
+                    min: 0
+                    width: 33
+                    
+          -
+            handle: shipping_class
+            field:
+              type: select
+              display: Shipping Class
+              options:
+                standard: Standard
+                heavy: Heavy Item
+                fragile: Fragile
+                oversized: Oversized
+              default: standard
+              if:
+                field: requires_shipping
+                equals: true
+      
+      attributes:
+        display: Product Attributes
+        fields:
+          -
+            handle: attributes
+            field:
+              type: replicator
+              display: Custom Attributes
+              instructions: Add custom attributes like size, color, material, etc.
+              sets:
+                attribute:
+                  display: Attribute
+                  fields:
+                    -
+                      handle: name
+                      field:
+                        type: text
+                        display: Attribute Name
+                        validate: required
+                        placeholder: "e.g. Color, Size, Material"
+                    -
+                      handle: value
+                      field:
+                        type: text
+                        display: Attribute Value
+                        validate: required
+                        placeholder: "e.g. Red, Large, Cotton"
+                    -
+                      handle: visible
+                      field:
+                        type: toggle
+                        display: Visible on Frontend
+                        default: true
+  
+  # Tab SEO e publishing
+  seo:
+    display: SEO & Publishing
+    icon: search
+    sections:
+      publishing:
+        display: Publishing Options
+        fields:
+          -
+            handle: status
+            field:
+              type: select
+              display: Status
+              default: draft
+              options:
+                draft: Draft
+                active: Active
+                archived: Archived
+              validate: required
+              width: 50
+              
+          -
+            handle: published_at
+            field:
+              type: datetime
+              display: Published Date
+              mode: single
+              instructions: When this product becomes available
+              width: 50
+              
+          -
+            handle: featured
+            field:
+              type: toggle
+              display: Featured Product
+              default: false
+              instructions: Show this product in featured sections
+              width: 50
+              
+          -
+            handle: allow_reviews
+            field:
+              type: toggle
+              display: Allow Customer Reviews
+              default: true
+              width: 50
+      
+      seo_meta:
+        display: SEO Metadata
+        import: seo_fieldset

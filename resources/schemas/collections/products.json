@@ -1,0 +1,259 @@
+{
+  "title": "Products",
+  "handle": "products",
+  "type": "collection",
+  "description": "Product catalog entries",
+  "sort_field": "title",
+  "sort_direction": "asc",
+  "date_behavior": {
+    "past": "public",
+    "future": "private"
+  },
+  "structure": {
+    "root": false,
+    "tree": false,
+    "max_depth": 0
+  },
+  "orderable": true,
+  "searchable": true,
+  "revisions": true,
+  "mount": null,
+  "sites": ["default"],
+  "template": "products/show",
+  "layout": "layout",
+  "blueprints": ["product"],
+  "taxonomy": ["categories", "brands", "tags"],
+  "fields": {
+    "title": {
+      "type": "text",
+      "display": "Product Name",
+      "instructions": "The name of your product",
+      "required": true,
+      "validate": ["required", "string", "max:255"],
+      "maxlength": 255,
+      "placeholder": "Enter product name"
+    },
+    "handle": {
+      "type": "text",
+      "display": "URL Handle",
+      "instructions": "The URL-friendly version of the product name",
+      "required": true,
+      "validate": ["required", "string", "max:255", "regex:/^[a-z0-9\\-_]+$/"],
+      "maxlength": 255,
+      "placeholder": "product-url-handle"
+    },
+    "description": {
+      "type": "textarea",
+      "display": "Description",
+      "instructions": "A detailed description of the product",
+      "rows": 6,
+      "character_limit": 1000
+    },
+    "price": {
+      "type": "number",
+      "display": "Price",
+      "instructions": "Product price in dollars",
+      "required": true,
+      "min": 0,
+      "step": 0.01,
+      "placeholder": "0.00"
+    },
+    "compare_price": {
+      "type": "number",
+      "display": "Compare At Price",
+      "instructions": "Higher price to show discount",
+      "min": 0,
+      "step": 0.01,
+      "placeholder": "0.00"
+    },
+    "status": {
+      "type": "select",
+      "display": "Status",
+      "instructions": "Publication status of the product",
+      "required": true,
+      "default": "draft",
+      "options": {
+        "active": "Active",
+        "draft": "Draft",
+        "archived": "Archived"
+      }
+    },
+    "visibility": {
+      "type": "select",
+      "display": "Visibility",
+      "instructions": "Who can see this product",
+      "required": true,
+      "default": "public",
+      "options": {
+        "public": "Public",
+        "hidden": "Hidden",
+        "private": "Private"
+      }
+    },
+    "sku": {
+      "type": "text",
+      "display": "SKU",
+      "instructions": "Stock keeping unit identifier",
+      "maxlength": 100,
+      "placeholder": "PROD-001"
+    },
+    "inventory_quantity": {
+      "type": "number",
+      "display": "Inventory Quantity",
+      "instructions": "Number of items in stock",
+      "min": 0,
+      "default": 0
+    },
+    "track_inventory": {
+      "type": "toggle",
+      "display": "Track Inventory",
+      "instructions": "Enable inventory tracking for this product",
+      "default": true
+    },
+    "continue_selling": {
+      "type": "toggle",
+      "display": "Continue Selling When Out of Stock",
+      "instructions": "Allow purchases when inventory is 0",
+      "default": false
+    },
+    "weight": {
+      "type": "number",
+      "display": "Weight",
+      "instructions": "Product weight for shipping calculations",
+      "min": 0,
+      "step": 0.01,
+      "placeholder": "0.00"
+    },
+    "weight_unit": {
+      "type": "select",
+      "display": "Weight Unit",
+      "default": "kg",
+      "options": {
+        "g": "Grams",
+        "kg": "Kilograms",
+        "oz": "Ounces",
+        "lb": "Pounds"
+      }
+    },
+    "category_id": {
+      "type": "entries",
+      "display": "Category",
+      "instructions": "Product category",
+      "collection": "categories",
+      "max_items": 1
+    },
+    "brand_id": {
+      "type": "entries",
+      "display": "Brand",
+      "instructions": "Product brand",
+      "collection": "brands",
+      "max_items": 1
+    },
+    "tags": {
+      "type": "taxonomy",
+      "display": "Tags",
+      "instructions": "Product tags for organization",
+      "taxonomy": "tags",
+      "max_items": 10
+    },
+    "images": {
+      "type": "assets",
+      "display": "Product Images",
+      "instructions": "Upload product photos",
+      "container": "products",
+      "max_files": 10,
+      "allowed_extensions": ["jpg", "jpeg", "png", "webp"]
+    },
+    "variants": {
+      "type": "replicator",
+      "display": "Product Variants",
+      "instructions": "Different versions of this product (size, color, etc.)",
+      "sets": {
+        "variant": {
+          "display": "Variant",
+          "fields": {
+            "title": {
+              "type": "text",
+              "display": "Variant Title",
+              "placeholder": "Size / Color"
+            },
+            "sku": {
+              "type": "text",
+              "display": "SKU",
+              "maxlength": 100
+            },
+            "price": {
+              "type": "number",
+              "display": "Price",
+              "min": 0,
+              "step": 0.01
+            },
+            "inventory_quantity": {
+              "type": "number",
+              "display": "Inventory",
+              "min": 0,
+              "default": 0
+            },
+            "option_values": {
+              "type": "grid",
+              "display": "Option Values",
+              "fields": {
+                "name": {
+                  "type": "text",
+                  "display": "Option Name"
+                },
+                "value": {
+                  "type": "text",
+                  "display": "Option Value"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "seo": {
+      "type": "group",
+      "display": "SEO Settings",
+      "instructions": "Search engine optimization settings",
+      "fields": {
+        "title": {
+          "type": "text",
+          "display": "SEO Title",
+          "instructions": "Title for search engines",
+          "maxlength": 60
+        },
+        "description": {
+          "type": "textarea",
+          "display": "Meta Description",
+          "instructions": "Description for search engines",
+          "rows": 3,
+          "maxlength": 160
+        },
+        "keywords": {
+          "type": "text",
+          "display": "Keywords",
+          "instructions": "Comma-separated keywords"
+        }
+      }
+    },
+    "custom_fields": {
+      "type": "grid",
+      "display": "Custom Fields",
+      "instructions": "Additional product attributes",
+      "max_rows": 20,
+      "fields": {
+        "name": {
+          "type": "text",
+          "display": "Field Name",
+          "required": true
+        },
+        "value": {
+          "type": "text",
+          "display": "Field Value",
+          "required": true
+        }
+      }
+    }
+  }
+}

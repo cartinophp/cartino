@@ -1,0 +1,73 @@
+{
+  "name": "customers",
+  "title": "Customer Custom Fields",
+  "description": "Custom fields configuration for customers",
+  "fields": [
+    {
+      "name": "company",
+      "label": "Company",
+      "type": "text",
+      "group": "Business Info"
+    },
+    {
+      "name": "job_title",
+      "label": "Job Title",
+      "type": "text",
+      "group": "Business Info"
+    },
+    {
+      "name": "vat_number",
+      "label": "VAT Number",
+      "type": "text",
+      "group": "Business Info",
+      "validation": {
+        "pattern": "^[A-Z]{2}[0-9A-Z]+$"
+      }
+    },
+    {
+      "name": "preferred_language",
+      "label": "Preferred Language",
+      "type": "select",
+      "group": "Preferences",
+      "validation": {
+        "options": ["it", "en", "fr", "de", "es"]
+      },
+      "default": "it"
+    },
+    {
+      "name": "marketing_consent",
+      "label": "Marketing Email Consent",
+      "type": "boolean",
+      "group": "Privacy",
+      "default": false
+    },
+    {
+      "name": "interests",
+      "label": "Interests",
+      "type": "multi_select",
+      "group": "Preferences",
+      "validation": {
+        "options": ["Electronics", "Fashion", "Home & Garden", "Sports", "Books", "Beauty", "Automotive", "Health"]
+      }
+    },
+    {
+      "name": "customer_type",
+      "label": "Customer Type",
+      "type": "select",
+      "group": "Classification",
+      "validation": {
+        "options": ["B2C", "B2B", "Reseller", "Distributor"]
+      },
+      "default": "B2C"
+    },
+    {
+      "name": "loyalty_tier",
+      "label": "Loyalty Tier",
+      "type": "select",
+      "group": "Loyalty",
+      "validation": {
+        "options": ["Bronze", "Silver", "Gold", "Platinum"]
+      }
+    }
+  ]
+}

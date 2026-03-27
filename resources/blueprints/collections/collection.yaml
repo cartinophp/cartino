@@ -1,0 +1,199 @@
+title: Category
+sections:
+  main:
+    display: Main
+    fields:
+      -
+        handle: title
+        field:
+          type: text
+          display: Title
+          validate: required
+          width: 50
+      -
+        handle: slug
+        field:
+          type: slug
+          display: Slug
+          from: title
+          validate: required
+          width: 50
+      -
+        handle: handle
+        field:
+          type: text
+          display: Handle
+          instructions: 'Unique identifier for API access'
+          validate: alpha_dash
+      -
+        handle: description
+        field:
+          type: textarea
+          display: Description
+          rows: 3
+      -
+        handle: body_html
+        field:
+          type: markdown
+          display: 'Full Description'
+          instructions: 'Rich text description for collection page'
+  
+  collection_type:
+    display: 'Category Type'
+    fields:
+      -
+        handle: collection_type
+        field:
+          type: select
+          display: Type
+          options:
+            manual: Manual
+            automated: Automated
+          default: manual
+          validate: required
+      -
+        handle: rules
+        field:
+          type: grid
+          display: 'Automated Rules'
+          instructions: 'Products matching these rules will be automatically added'
+          if:
+            collection_type: equals automated
+          fields:
+            -
+              handle: field
+              field:
+                type: select
+                display: Field
+                options:
+                  title: Title
+                  product_type: 'Product Type'
+                  brand_id: Brand
+                  tags: Tags
+                  price: Price
+                  inventory_quantity: 'Inventory Quantity'
+            -
+              handle: condition
+              field:
+                type: select
+                display: Condition
+                options:
+                  equals: 'Equals'
+                  not_equals: 'Not Equals'
+                  contains: 'Contains'
+                  starts_with: 'Starts With'
+                  ends_with: 'Ends With'
+                  greater_than: 'Greater Than'
+                  less_than: 'Less Than'
+            -
+              handle: value
+              field:
+                type: text
+                display: Value
+      -
+        handle: disjunctive
+        field:
+          type: toggle
+          display: 'Match Any Rule'
+          instructions: 'If enabled, products matching ANY rule will be included. Otherwise, ALL rules must match.'
+          default: false
+          if:
+            collection_type: equals automated
+      -
+        handle: sort_order
+        field:
+          type: select
+          display: 'Sort Order'
+          options:
+            manual: 'Manual (Drag & Drop)'
+            best_selling: 'Best Selling'
+            alpha_asc: 'Alphabetically, A-Z'
+            alpha_desc: 'Alphabetically, Z-A'
+            price_asc: 'Price, Low to High'
+            price_desc: 'Price, High to Low'
+            created_asc: 'Date Created, Old to New'
+            created_desc: 'Date Created, New to Old'
+          default: manual
+  
+  products:
+    display: Products
+    fields:
+      -
+        handle: products
+        field:
+          type: relationship
+          display: Products
+          resource: products
+          instructions: 'Manually select products for this collection'
+          if:
+            collection_type: equals manual
+  
+  media:
+    display: Media
+    fields:
+      -
+        handle: image
+        field:
+          type: assets
+          display: 'Category Image'
+          container: collections
+          max_files: 1
+  
+  seo:
+    display: SEO
+    fields:
+      -
+        handle: meta_title
+        field:
+          type: text
+          display: 'Meta Title'
+          character_limit: 60
+      -
+        handle: meta_description
+        field:
+          type: textarea
+          display: 'Meta Description'
+          character_limit: 160
+          rows: 3
+      -
+        handle: seo
+        field:
+          type: seo
+          display: 'Advanced SEO'
+  
+  sidebar:
+    display: Publishing
+    fields:
+      -
+        handle: status
+        field:
+          type: select
+          display: Status
+          options:
+            draft: Draft
+            active: Active
+            archived: Archived
+          default: draft
+          validate: required
+      -
+        handle: published_at
+        field:
+          type: date
+          display: 'Published Date'
+          mode: single
+          time_enabled: true
+      -
+        handle: published_scope
+        field:
+          type: select
+          display: 'Published Scope'
+          options:
+            web: Web
+            global: Global
+          default: web
+      -
+        handle: template_suffix
+        field:
+          type: text
+          display: 'Template Suffix'
+          instructions: 'Use a custom template (e.g., "summer" for collection.summer.blade.php)'

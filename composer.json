@@ -1,0 +1,103 @@
+{
+    "name": "cartinophp/cartino",
+    "description": "CartinoPHP - Modern Laravel E-commerce Platform inspired by Shopify & Statamic CMS",
+    "type": "library",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Vitali",
+            "email": "v.jalbu31@gmail.com"
+        }
+    ],
+    "require": {
+        "php": "^8.3 || ^8.4",
+        "inertiajs/inertia-laravel": "^3.0.1",
+        "intervention/image": "^3.11.7",
+        "laravel/sanctum": "^4.3.1",
+        "laravel/socialite": "^5.26",
+        "league/csv": "^9.27.1",
+        "league/flysystem": "^3.33",
+        "league/glide": "^3.2.0",
+        "pusher/pusher-php-server": "^7.0",
+        "spatie/laravel-activitylog": "^5.0",
+        "spatie/laravel-backup": "^10.2.1",
+        "spatie/laravel-medialibrary": "^11.21.0",
+        "spatie/laravel-permission": "^7.2.4",
+        "spatie/laravel-query-builder": "^7.0.1",
+        "symfony/yaml": "^7.4.1",
+        "tightenco/ziggy": "^2.6.2"
+    },
+    "require-dev": {
+        "fakerphp/faker": "^1.24",
+        "larastan/larastan": "^3.9.3",
+        "laravel/pint": "^1.29",
+        "nunomaduro/collision": "^8.9.1",
+        "orchestra/testbench": "^11.0",
+        "pestphp/pest": "^4.4.3",
+        "pestphp/pest-plugin-laravel": "^4.1.0",
+        "phpstan/phpstan": "^2.1.44"
+    },
+    "autoload": {
+        "psr-4": {
+            "Cartino\\": "src/",
+            "Cartino\\Database\\Factories\\": "database/factories/",
+            "Cartino\\Database\\Seeders\\": "database/seeders/"
+        },
+        "classmap": [
+            "database/factories"
+        ],
+        "files": [
+            "src/Support/helpers.php"
+        ]
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Cartino\\Tests\\": "tests/",
+            "Workbench\\App\\": "workbench/app/",
+            "Workbench\\Database\\Factories\\": "workbench/database/factories/",
+            "Workbench\\Database\\Seeders\\": "workbench/database/seeders/"
+        }
+    },
+    "scripts": {
+        "pint": "./vendor/bin/pint",
+        "analyse": [
+            "Composer\\Config::disableProcessTimeout",
+            "./vendor/bin/phpstan analyse src --memory-limit=-1"
+        ],
+        "test": "vendor/bin/pest",
+        "test-coverage": "vendor/bin/pest --coverage",
+        "format": "vendor/bin/pint",
+        "post-autoload-dump": [
+            "@clear",
+            "@prepare"
+        ],
+        "clear": "@php vendor/bin/testbench package:purge-skeleton --ansi",
+        "prepare": "@php vendor/bin/testbench package:discover --ansi",
+        "build": "@php vendor/bin/testbench workbench:build --ansi",
+        "serve": [
+            "Composer\\Config::disableProcessTimeout",
+            "@build",
+            "@php vendor/bin/testbench serve --ansi"
+        ],
+        "lint": [
+            "@php vendor/bin/pint --ansi"
+        ]
+    },
+    "config": {
+        "sort-packages": true,
+        "allow-plugins": {
+            "carthage-software/mago": true,
+            "pestphp/pest-plugin": true,
+            "phpstan/extension-installer": true
+        }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Cartino\\CartinoServiceProvider"
+            ]
+        }
+    },
+    "minimum-stability": "dev",
+    "prefer-stable": true
+}
