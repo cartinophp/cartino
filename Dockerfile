@@ -113,6 +113,4 @@ RUN rm -rf tests/ \
     && rm -rf .git/
 
 # Final optimizations
-RUN php artisan storage:link \
-    && php artisan migrate --force \
-    && php artisan db:seed --force
+RUN php artisan storage:link
