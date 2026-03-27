@@ -53,6 +53,7 @@
   },
   "dependencies": {
     "@cartino/ui": "file:../ui",
+    "@inertiajs/vite": "^3.0.0",
     "@tanstack/vue-table": "^8.21.3",
     "@vueuse/core": "^14.2.1",
     "chart.js": "^4.5.1",

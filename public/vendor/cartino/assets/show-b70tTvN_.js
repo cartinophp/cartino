@@ -1,0 +1,1 @@
+import"./vendor-BzMx1PYw.js";import{B as e,C as t,E as n,lt as r}from"./ui-BTLf685I.js";var i={class:`products-index`},a={class:`debug-props`},o={__name:`show`,props:{},setup(o){return(o,s)=>(e(),n(`div`,i,[s[0]||=t(`h1`,null,`Show Brand`,-1),t(`div`,a,[t(`code`,null,r(JSON.stringify(o.$page.props,null,2)),1)])]))}};export{o as default};

@@ -1,4 +1,3 @@
-import { createApp, h } from "vue";
 import { createInertiaApp } from "@inertiajs/vue3";
 import { createPinia } from "pinia";
 import CpLayout from "@/layouts/cp-layout.vue";
@@ -21,25 +20,19 @@ if (token) {
 }
 
 createInertiaApp({
-  resolve: (name) => {
-    const pages = import.meta.glob("./pages/**/*.vue", { eager: true });
-    const page = pages[`./pages/${name}.vue`];
-    
-    // Set default layout only if not already specified and not an auth page
-    if (!page.default.layout && !name.startsWith('auth/')) {
-      page.default.layout = CpLayout;
+  // v3: Default layout for all pages (per-page layouts take precedence)
+  layout: (name) => {
+    if (name.startsWith('auth/')) {
+      return null;
     }
-    
-    return page;
+    return CpLayout;
   },
-  setup({ el, App, props, plugin }) {
-    const app = createApp({ render: () => h(App, props) })
-      .use(plugin)
-      .use(createPinia())
-      .use(translationsPlugin); // Statamic-style translations
+  withApp(app) {
+    app.use(createPinia())
+       .use(translationsPlugin); // Statamic-style translations
 
     // Configure CSRF token for Inertia requests
-    if (window.Laravel && window.Laravel.csrfToken) {
+    if (window.Laravel?.csrfToken) {
       app.config.globalProperties.$csrf = window.Laravel.csrfToken;
     }
 
@@ -64,12 +57,5 @@ createInertiaApp({
         });
       }
     };
-
-    return app.mount(el);
   },
 });
-
-// Export for debugging
-if (import.meta.env.DEV) {
-  window.CartinoApp = app;
-}

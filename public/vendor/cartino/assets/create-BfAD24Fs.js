@@ -1,0 +1,1 @@
+import{B as e,C as t,E as n}from"./ui-BTLf685I.js";import{t as r}from"./app-sRFQZNO5.js";var i={},a={class:`products-index`};function o(r,i){return e(),n(`div`,a,[...i[0]||=[t(`h1`,null,`Create order`,-1)]])}var s=r(i,[[`render`,o]]);export{s as default};

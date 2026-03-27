@@ -1,13 +1,14 @@
 import { defineConfig } from "vite";
 import vue from "@vitejs/plugin-vue";
 import tailwindcss from "@tailwindcss/vite";
+import inertia from "@inertiajs/vite";
 import { resolve } from "path";
 
 const isDev = process.env.NODE_ENV === 'development';
 const isPackageDev = process.env.CARTINO_DEV === 'true';
 
 export default defineConfig({
-  plugins: [vue(), tailwindcss()],
+  plugins: [vue(), tailwindcss(), inertia()],
   resolve: {
     alias: {
       "@": resolve(__dirname, "resources/js"),
@@ -33,9 +34,13 @@ export default defineConfig({
         app: resolve(__dirname, "resources/js/app.js"),
       },
       output: {
-        manualChunks: {
-          vendor: ["vue", "pinia", "@inertiajs/vue3"],
-          ui: ["@heroicons/vue", "reka-ui"],
+        manualChunks(id) {
+          if (id.includes('node_modules/vue/') || id.includes('node_modules/pinia/') || id.includes('node_modules/@inertiajs/')) {
+            return 'vendor';
+          }
+          if (id.includes('node_modules/@heroicons/') || id.includes('node_modules/reka-ui/')) {
+            return 'ui';
+          }
         },
         assetFileNames: 'assets/[name]-[hash][extname]',
         chunkFileNames: 'assets/[name]-[hash].js',
@@ -64,8 +69,6 @@ export default defineConfig({
       "vue",
       "pinia",
       "@heroicons/vue",
-      "axios",
-      "lodash-es",
       "@inertiajs/vue3",
       "@cartino/ui",
     ],

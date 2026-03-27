@@ -1,0 +1,1 @@
+import"./vendor-BzMx1PYw.js";import{B as e,C as t,E as n}from"./ui-BTLf685I.js";var r={class:`products-index`},i={__name:`create`,props:{},setup(i){return(i,a)=>(e(),n(`div`,r,[...a[0]||=[t(`h1`,null,`Create Brand`,-1)]]))}};export{i as default};

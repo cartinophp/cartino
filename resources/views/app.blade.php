@@ -4,7 +4,6 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>{{ config('app.name', 'Laravel') }} - Control Panel</title>
     
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.bunny.net">
@@ -30,9 +29,11 @@
         {{-- The sandbox vite.config.js includes '../cartino/resources/js/app.js' as input --}}
         @vite(['../cartino/resources/js/app.js'])
     @endif
-    @inertiaHead
+    <x-inertia::head>
+        <title data-inertia>{{ config('app.name', 'Laravel') }} - Control Panel</title>
+    </x-inertia::head>
 </head>
 <body class="font-sans antialiased">
-    @inertia
+    <x-inertia::app />
 </body>
 </html>

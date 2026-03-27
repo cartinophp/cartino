@@ -1,0 +1,1 @@
+import"./vendor-BzMx1PYw.js";import{B as e,C as t,E as n,lt as r}from"./ui-BTLf685I.js";var i={class:`reports-index`},a={class:`debug-props`},o={__name:`index`,props:{},setup(o){return(o,s)=>(e(),n(`div`,i,[s[1]||=t(`h1`,null,`Analytics`,-1),t(`div`,a,[s[0]||=t(`h2`,null,`Props Data:`,-1),t(`code`,null,r(JSON.stringify(o.$page.props,null,2)),1)])]))}};export{o as default};
