@@ -17,9 +17,7 @@ return new class extends Migration
         $addProviderRefreshToken = ! Schema::hasColumn('users', 'provider_refresh_token');
         $addAvatar = ! Schema::hasColumn('users', 'avatar');
 
-        $providerWillExist = ! $addProvider ? true : true;
-        $providerIdWillExist = ! $addProviderId ? true : true;
-        $shouldAddIndex = ($addProvider || $addProviderId) && $providerWillExist && $providerIdWillExist;
+        $shouldAddIndex = $addProvider || $addProviderId;
 
         Schema::table('users', function (Blueprint $table) use (
             $addProvider,
